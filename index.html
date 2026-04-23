@@ -29,6 +29,7 @@
     <div class="filter-bar">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="web">Web Apps</button>
+      <button class="filter-btn" data-filter="flutter">Flutter</button>
       <button class="filter-btn" data-filter="desktop">Desktop Apps</button>
     </div>
 
@@ -42,6 +43,15 @@
   <footer>
     Making my own solutions &nbsp;·&nbsp; <a href="mailto:nickwgubbins@gmail.com" style="color:inherit">Nick Gubbins</a>
   </footer>
+
+  <!-- Flutter launch modal -->
+  <div id="app-modal" class="modal" role="dialog" aria-modal="true" aria-label="App launcher" hidden>
+    <div class="modal-bar">
+      <span id="modal-title" class="modal-title"></span>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <iframe id="modal-frame" class="modal-frame" title="App" allow="cross-origin-isolated"></iframe>
+  </div>
 
   <script src="assets/main.js"></script>
 </body>
