@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nick Gubbins — Apps</title>
+  <meta name="description" content="A collection of small Python desktop apps and web tools." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="#">Nick<span>.</span></a>
+    <nav>
+      <a href="mailto:nickwgubbins@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-badge">⚡ Concept to development</div>
+      <h1>Stop waiting.<br /><span class="accent">Build your own.</span></h1>
+      <p>If a tool doesn't exist, make it. A growing collection of Python desktop apps and web tools built to solve real problems — no off-the-shelf compromise.</p>
+    </section>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="web">Web Apps</button>
+      <button class="filter-btn" data-filter="desktop">Desktop Apps</button>
+    </div>
+
+    <section class="grid-section">
+      <div class="app-grid" id="app-grid">
+        <!-- populated by main.js -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Making my own solutions &nbsp;·&nbsp; <a href="mailto:nickwgubbins@gmail.com" style="color:inherit">Nick Gubbins</a>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>
