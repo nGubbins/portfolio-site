@@ -63,6 +63,12 @@ const allApps = [
   }
 ];
 
+// ── Helpers ──────────────────────────────────────────────
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 // ── Install helpers ──────────────────────────────────────
 
 function installLines(app) {
@@ -104,11 +110,15 @@ async function fetchData() {
       try {
         const res = await fetch(`https://pypi.org/pypi/${app.pypi}/json`);
         if (res.ok) {
-          const { info } = await res.json();
+          const { info, urls } = await res.json();
           if (info.summary) {
             app.description = info.summary;
             const el = document.getElementById(`desc-${app.id}`);
             if (el) el.textContent = info.summary;
+          }
+          if (urls?.[0]?.upload_time) {
+            const dateEl = document.getElementById(`date-${app.id}`);
+            if (dateEl) dateEl.textContent = 'released ' + formatDate(urls[0].upload_time);
           }
         }
       } catch {}
@@ -135,6 +145,8 @@ async function fetchData() {
         app.links.downloads = release.assets
           .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
           .filter(d => d.label);
+        const dateEl = document.getElementById(`date-${app.id}`);
+        if (dateEl && release.published_at) dateEl.textContent = 'released ' + formatDate(release.published_at);
       }
       const el = document.getElementById(`links-${app.id}`);
       if (el) el.innerHTML = buildLinks(app);
@@ -197,6 +209,7 @@ function cardHTML(app, index) {
       <p class="card-desc" id="desc-${app.id}">${app.description}</p>
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
       <div class="card-links" id="links-${app.id}">${links}</div>
+      <div class="card-date" id="date-${app.id}"></div>
     </article>`;
 }
 
