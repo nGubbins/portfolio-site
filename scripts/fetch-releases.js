@@ -6,14 +6,9 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-const repos = [
-  'nGubbins/peerwire',
-  'nGubbins/ng3-player',
-  'nGubbins/urlias-cli',
-  'nGubbins/portfolio-site',
-  'nGubbins/newgh',
-  'nGubbins/tokensplit'
-];
+// Read repos directly from projects.js so this script never needs manual updating
+const source = fs.readFileSync('assets/projects.js', 'utf8');
+const repos = [...source.matchAll(/repo:\s*["']([^"']+)["']/g)].map(m => m[1]);
 
 function platformLabel(filename) {
   const n = filename.toLowerCase();

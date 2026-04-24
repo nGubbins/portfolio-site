@@ -2,24 +2,35 @@
 
 Portfolio site — live at [newp.space](https://newp.space).
 
-A static single-page site that pulls project cards dynamically from the GitHub releases API and PyPI JSON API on every load. No build step, no framework.
+A static single-page site that pulls project cards dynamically from the GitHub releases API and PyPI JSON API. No build step, no framework. Use it as a template for your own.
 
 ## Stack
 
 - Vanilla HTML / CSS / JS
-- GitHub Actions → GitHub Pages (deploys on `v*` tag push)
-- GitHub Releases API for download buttons
+- GitHub Actions → GitHub Pages (deploys on every push to `master`)
+- Release data baked in at deploy time via `GITHUB_TOKEN` — no runtime rate limits
 - PyPI JSON API for package descriptions
 
 ## Structure
 
 ```
-index.html        — markup and filter bar
-assets/style.css  — all styles
-assets/main.js    — app data, fetch logic, rendering
-style-guide.md    — colour tokens and design principles
+index.html                   — markup and filter bar
+assets/projects.js           — ← your projects, edit this file
+assets/main.js               — fetch logic and rendering
+assets/style.css             — all styles
+style-guide.md               — colour tokens and design principles
+scripts/fetch-releases.js    — runs at deploy time to bake in release data
 .github/workflows/deploy.yml — GitHub Pages deploy workflow
 ```
+
+## Using as a template
+
+Click **Use this template** on GitHub to create your own copy, then:
+
+1. Edit `assets/projects.js` — replace the entries with your own projects
+2. Update `index.html` — change the site name, title, and footer
+3. Add your custom domain to `CNAME` and configure GitHub Pages in repo settings
+4. Push to `master` — GitHub Actions deploys automatically
 
 ## Managing projects with Claude Code
 
@@ -37,42 +48,32 @@ Then from the repo directory:
 claude
 ```
 
-Example prompts to get started:
+Example prompts:
 
 - *"Add a card for github.com/you/your-repo"*
 - *"Grab all my public PyPI packages and add cards for each"*
-- *"Add a box for this portfolio site and repo"*
-- *"Commit and push with a v tag to deploy"*
-
-Claude will fetch repo descriptions, map release assets to platform labels, write the `allApps` entry, commit, and push — including tagging a release to trigger the deploy workflow.
+- *"Commit and push to deploy"*
 
 ## Adding a project manually
 
-Edit `allApps` in `assets/main.js`. Each entry supports:
+Edit `assets/projects.js`. Each entry supports:
 
 ```js
 {
   id: "unique-id",
   name: "Display Name",
-  description: "Fallback description (replaced by live API data)",
+  description: "Fallback (replaced at load time by live GitHub/PyPI description)",
   type: "desktop" | "web" | "flutter" | "package",
-  tags: ["tag1", "tag2"],
+  tags: ["tag1", "tag2"],        // max 3
   icon: "emoji",
-  repo: "owner/repo",       // GitHub repo — fetches description + release assets
-  pypi: "package-name",     // PyPI package — fetches description, shows pip install
+  pinned: true,                  // optional — shows in pinned section at top
+  repo: "owner/repo",            // GitHub — fetches description + release assets
+  pypi: "package-name",          // PyPI — fetches description, shows pip install
   links: {
     github: "https://...",
     pypi:   "https://...",
-    demo:   "https://...",
-    launch: "path/to/flutter-web/",
+    demo:   "https://...",       // primary button for web apps
+    launch: "path/to/flutter/",  // opens Flutter web build in modal
   }
 }
-```
-
-## Deploy
-
-Push a version tag to trigger the GitHub Actions workflow:
-
-```sh
-git tag v1.0.0 && git push origin v1.0.0
 ```
