@@ -239,6 +239,12 @@ nav a:hover {
   border: 1px solid #54c5f830;
 }
 
+.type-badge.package {
+  background: #f9731618;
+  color: #f97316;
+  border: 1px solid #f9731630;
+}
+
 .card-desc {
   color: var(--text-muted);
   font-size: 0.855rem;
@@ -304,6 +310,78 @@ nav a:hover {
 .btn-ghost:hover {
   border-color: var(--accent);
   color: var(--text);
+}
+
+/* ── Info button & install panel ── */
+.info-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-style: italic;
+  font-weight: 700;
+  font-family: serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  padding: 0;
+}
+
+.info-btn:hover,
+.info-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.card-install {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.45rem 0.6rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.install-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.install-line code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-family: inherit;
+  padding: 0.1rem 0.4rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.copy-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ── Loading ring ── */

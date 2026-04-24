@@ -4,7 +4,7 @@ const allApps = [
   {
     id: "peerwire",
     name: "Peerwire",
-    description: "Lightweight chat app for desktop. Available for Windows, macOS, and Linux — no account or server required.",
+    description: "Lightweight chat app for desktop.",
     type: "desktop",
     tags: ["electron", "chat", "cross-platform"],
     icon: "💬",
@@ -24,16 +24,60 @@ const allApps = [
   {
     id: "ng3-player",
     name: "ng3 Player",
-    description: "Simple music player and library manager. Available for Windows and Android.",
+    description: "Simple music player and library manager.",
     type: "flutter",
     tags: ["flutter", "music", "windows", "android"],
     icon: "🎵",
     repo: "nGubbins/ng3-player",
     links: { github: "https://github.com/nGubbins/ng3-player" }
+  },
+  {
+    id: "newgh",
+    name: "newgh",
+    description: "Sets up a Python project repo for modern development.",
+    type: "package",
+    tags: ["python", "cli", "scaffolding"],
+    icon: "🏗️",
+    pypi: "newgh",
+    links: { pypi: "https://pypi.org/project/newgh/" }
+  },
+  {
+    id: "tokensplit",
+    name: "tokensplit",
+    description: "String-separated values with user-defined multi-character delimiters.",
+    type: "package",
+    tags: ["python", "parsing", "strings"],
+    icon: "✂️",
+    pypi: "tokensplit",
+    links: { pypi: "https://pypi.org/project/tokensplit/" }
   }
 ];
 
-// ── Releases ─────────────────────────────────────────────
+// ── Install helpers ──────────────────────────────────────
+
+function installLines(app) {
+  const lines = [];
+  if (app.pypi) lines.push(`pip install ${app.pypi}`);
+  if (app.repo) lines.push(`git clone https://github.com/${app.repo}`);
+  return lines;
+}
+
+function toggleInstall(id) {
+  const panel = document.getElementById(`install-${id}`);
+  const btn = document.getElementById(`info-btn-${id}`);
+  if (!panel) return;
+  panel.hidden = !panel.hidden;
+  btn.classList.toggle('active', !panel.hidden);
+}
+
+function copyInstall(btn, cmd) {
+  navigator.clipboard.writeText(cmd).then(() => {
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+// ── Releases & descriptions ──────────────────────────────
 
 function platformLabel(filename) {
   const n = filename.toLowerCase();
@@ -44,31 +88,47 @@ function platformLabel(filename) {
   return null;
 }
 
-async function fetchReleases() {
-  allApps.filter(a => a.repo).forEach(async app => {
-    const [repoRes, releaseRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
-      fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null)
-    ]);
+async function fetchData() {
+  allApps.forEach(async app => {
+    if (app.pypi) {
+      try {
+        const res = await fetch(`https://pypi.org/pypi/${app.pypi}/json`);
+        if (res.ok) {
+          const { info } = await res.json();
+          if (info.summary) {
+            app.description = info.summary;
+            const el = document.getElementById(`desc-${app.id}`);
+            if (el) el.textContent = info.summary;
+          }
+        }
+      } catch {}
+    }
 
-    if (repoRes?.ok) {
-      const { description } = await repoRes.json();
-      if (description) {
-        app.description = description;
-        const el = document.getElementById(`desc-${app.id}`);
-        if (el) el.textContent = description;
+    if (app.repo) {
+      const [repoRes, releaseRes] = await Promise.all([
+        fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
+        fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null)
+      ]);
+
+      if (repoRes?.ok) {
+        const { description } = await repoRes.json();
+        if (description) {
+          app.description = description;
+          const el = document.getElementById(`desc-${app.id}`);
+          if (el) el.textContent = description;
+        }
       }
-    }
 
-    app.links.downloads = [];
-    if (releaseRes?.ok) {
-      const release = await releaseRes.json();
-      app.links.downloads = release.assets
-        .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
-        .filter(d => d.label);
+      app.links.downloads = [];
+      if (releaseRes?.ok) {
+        const release = await releaseRes.json();
+        app.links.downloads = release.assets
+          .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
+          .filter(d => d.label);
+      }
+      const el = document.getElementById(`links-${app.id}`);
+      if (el) el.innerHTML = buildLinks(app);
     }
-    const el = document.getElementById(`links-${app.id}`);
-    if (el) el.innerHTML = buildLinks(app);
   });
 }
 
@@ -93,11 +153,25 @@ function render() {
 }
 
 function cardHTML(app, index) {
-  const badges = { web: '🌐 Web', desktop: '🖥️ Desktop', flutter: '🐦 Flutter' };
+  const badges = { web: '🌐 Web', desktop: '🖥️ Desktop', flutter: '🐦 Flutter', package: '📦 Package' };
   const typeBadge = `<span class="type-badge ${app.type}">${badges[app.type] || app.type}</span>`;
 
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const links = buildLinks(app);
+  const lines = installLines(app);
+
+  const infoBtn = lines.length
+    ? `<button class="info-btn" id="info-btn-${app.id}" onclick="toggleInstall('${app.id}')" aria-label="Install instructions">i</button>`
+    : '';
+
+  const installPanel = lines.length ? `
+    <div class="card-install" id="install-${app.id}" hidden>
+      ${lines.map(cmd => `
+        <div class="install-line">
+          <code>${cmd}</code>
+          <button class="copy-btn" onclick="copyInstall(this, '${cmd}')">copy</button>
+        </div>`).join('')}
+    </div>` : '';
 
   return `
     <article class="card" style="animation-delay:${index * 0.04}s">
@@ -107,7 +181,9 @@ function cardHTML(app, index) {
           <div class="card-title">${app.name}</div>
           ${typeBadge}
         </div>
+        ${infoBtn}
       </div>
+      ${installPanel}
       <p class="card-desc" id="desc-${app.id}">${app.description}</p>
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
       <div class="card-links" id="links-${app.id}">${links}</div>
@@ -128,6 +204,9 @@ function buildLinks(app) {
     });
   } else if (app.type === 'web' && l.demo) {
     parts.push(`<a class="btn btn-primary" href="${l.demo}" target="_blank" rel="noopener">↗ Live Demo</a>`);
+  }
+  if (l.pypi) {
+    parts.push(`<a class="btn btn-ghost" href="${l.pypi}" target="_blank" rel="noopener">PyPI</a>`);
   }
   if (l.github) {
     parts.push(`<a class="btn btn-ghost" href="${l.github}" target="_blank" rel="noopener">Source</a>`);
@@ -178,4 +257,4 @@ document.addEventListener('keydown', e => {
 // ── Init ─────────────────────────────────────────────────
 
 render();
-fetchReleases();
+fetchData();
