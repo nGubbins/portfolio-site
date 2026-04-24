@@ -10,6 +10,7 @@ const allApps = [
     tags: ["electron", "chat", "cross-platform"],
     icon: "💬",
     repo: "nGubbins/peerwire",
+    pinned: true,
     links: { github: "https://github.com/nGubbins/peerwire" }
   },
   {
@@ -30,6 +31,7 @@ const allApps = [
     tags: ["flutter", "music", "cross-platform"],
     icon: "🎵",
     repo: "nGubbins/ng3-player",
+    pinned: true,
     links: { github: "https://github.com/nGubbins/ng3-player" }
   },
   {
@@ -83,8 +85,8 @@ function toggleInstall(id) {
   const panel = document.getElementById(`install-${id}`);
   const btn = document.getElementById(`info-btn-${id}`);
   if (!panel) return;
-  panel.hidden = !panel.hidden;
-  btn.classList.toggle('active', !panel.hidden);
+  panel.classList.toggle('open');
+  btn.classList.toggle('active', panel.classList.contains('open'));
 }
 
 function copyInstall(btn, cmd) {
@@ -177,22 +179,21 @@ async function fetchData() {
 // ── Render ──────────────────────────────────────────────
 
 function render() {
+  const pinnedGrid = document.getElementById('pinned-grid');
   const grid = document.getElementById('app-grid');
   const q = searchQuery.toLowerCase();
-  const apps = allApps
+
+  const pinned = allApps.filter(a => a.pinned);
+  pinnedGrid.innerHTML = pinned.map((app, i) => cardHTML(app, i)).join('');
+
+  const rest = allApps
+    .filter(a => !a.pinned)
     .filter(a => activeFilter === 'all' || a.type === activeFilter)
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
-  if (apps.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <span>🔍</span>
-        No apps in this category yet.
-      </div>`;
-    return;
-  }
-
-  grid.innerHTML = apps.map((app, i) => cardHTML(app, i)).join('');
+  grid.innerHTML = rest.length
+    ? rest.map((app, i) => cardHTML(app, i)).join('')
+    : `<div class="empty-state"><span>🔍</span> No projects match.</div>`;
 }
 
 function cardHTML(app, index) {
@@ -208,7 +209,7 @@ function cardHTML(app, index) {
     : '';
 
   const installPanel = lines.length ? `
-    <div class="card-install" id="install-${app.id}" hidden>
+    <div class="card-install" id="install-${app.id}">
       ${lines.map(cmd => `
         <div class="install-line">
           <code>${cmd}</code>
