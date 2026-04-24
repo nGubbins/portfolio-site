@@ -46,15 +46,26 @@ function platformLabel(filename) {
 
 async function fetchReleases() {
   allApps.filter(a => a.repo).forEach(async app => {
-    try {
-      const res = await fetch(`https://api.github.com/repos/${app.repo}/releases/latest`);
-      if (!res.ok) throw new Error();
-      const release = await res.json();
+    const [repoRes, releaseRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
+      fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null)
+    ]);
+
+    if (repoRes?.ok) {
+      const { description } = await repoRes.json();
+      if (description) {
+        app.description = description;
+        const el = document.getElementById(`desc-${app.id}`);
+        if (el) el.textContent = description;
+      }
+    }
+
+    app.links.downloads = [];
+    if (releaseRes?.ok) {
+      const release = await releaseRes.json();
       app.links.downloads = release.assets
         .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
         .filter(d => d.label);
-    } catch {
-      app.links.downloads = [];
     }
     const el = document.getElementById(`links-${app.id}`);
     if (el) el.innerHTML = buildLinks(app);
@@ -97,7 +108,7 @@ function cardHTML(app, index) {
           ${typeBadge}
         </div>
       </div>
-      <p class="card-desc">${app.description}</p>
+      <p class="card-desc" id="desc-${app.id}">${app.description}</p>
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
       <div class="card-links" id="links-${app.id}">${links}</div>
     </article>`;
