@@ -32,6 +32,16 @@ const allApps = [
     links: { github: "https://github.com/nGubbins/ng3-player" }
   },
   {
+    id: "portfolio-site",
+    name: "newp space",
+    description: "This site.",
+    type: "web",
+    tags: ["html", "css", "js"],
+    icon: "🌐",
+    repo: "nGubbins/portfolio-site",
+    links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
+  },
+  {
     id: "newgh",
     name: "newgh",
     description: "Sets up a Python project repo for modern development.",
