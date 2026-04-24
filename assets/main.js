@@ -12,6 +12,16 @@ const allApps = [
     links: { github: "https://github.com/nGubbins/peerwire" }
   },
   {
+    id: "urlias-cli",
+    name: "urlias",
+    description: "CLI tool for inspecting web pages.",
+    type: "desktop",
+    tags: ["python", "cli", "web"],
+    icon: "🔗",
+    repo: "nGubbins/urlias-cli",
+    links: { github: "https://github.com/nGubbins/urlias-cli" }
+  },
+  {
     id: "ng3-player",
     name: "ng3 Player",
     description: "Simple music player and library manager. Available for Windows and Android.",
