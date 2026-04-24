@@ -1,4 +1,5 @@
 let activeFilter = 'all';
+let searchQuery = '';
 
 const allApps = [
   {
@@ -177,9 +178,10 @@ async function fetchData() {
 
 function render() {
   const grid = document.getElementById('app-grid');
-  const apps = activeFilter === 'all'
-    ? allApps
-    : allApps.filter(a => a.type === activeFilter);
+  const q = searchQuery.toLowerCase();
+  const apps = allApps
+    .filter(a => activeFilter === 'all' || a.type === activeFilter)
+    .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
   if (apps.length === 0) {
     grid.innerHTML = `
@@ -269,6 +271,11 @@ function setFilter(type) {
 
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
 });
 
 // ── Flutter modal ────────────────────────────────────────

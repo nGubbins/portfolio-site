@@ -112,6 +112,35 @@ nav a:hover {
   font-weight: 400;
 }
 
+/* ── Search bar ── */
+.search-bar {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 2rem 0.75rem;
+}
+
+.search-bar input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 0.5rem 0.9rem;
+  outline: none;
+  transition: border-color var(--transition);
+  box-sizing: border-box;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-bar input:focus {
+  border-color: var(--accent);
+}
+
 /* ── Filter bar ── */
 .filter-bar {
   max-width: 820px;
