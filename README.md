@@ -21,7 +21,32 @@ style-guide.md    — colour tokens and design principles
 .github/workflows/deploy.yml — GitHub Pages deploy workflow
 ```
 
-## Adding a project
+## Managing projects with Claude Code
+
+The easiest way to add and manage projects is with [Claude Code](https://claude.ai/code) — Anthropic's AI CLI. It can look up your GitHub repos and PyPI packages, write the card entries, and commit and deploy in one conversation.
+
+Install it:
+
+```sh
+npm install -g @anthropic-ai/claude-code
+```
+
+Then from the repo directory:
+
+```sh
+claude
+```
+
+Example prompts to get started:
+
+- *"Add a card for github.com/you/your-repo"*
+- *"Grab all my public PyPI packages and add cards for each"*
+- *"Add a box for this portfolio site and repo"*
+- *"Commit and push with a v tag to deploy"*
+
+Claude will fetch repo descriptions, map release assets to platform labels, write the `allApps` entry, commit, and push — including tagging a release to trigger the deploy workflow.
+
+## Adding a project manually
 
 Edit `allApps` in `assets/main.js`. Each entry supports:
 
