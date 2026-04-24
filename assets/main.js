@@ -35,21 +35,20 @@ function platformLabel(filename) {
 }
 
 async function fetchReleases() {
-  await Promise.all(
-    allApps
-      .filter(a => a.repo)
-      .map(async app => {
-        try {
-          const res = await fetch(`https://api.github.com/repos/${app.repo}/releases/latest`);
-          if (!res.ok) return;
-          const release = await res.json();
-          app.links.downloads = release.assets
-            .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
-            .filter(d => d.label);
-        } catch {}
-      })
-  );
-  render();
+  allApps.filter(a => a.repo).forEach(async app => {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${app.repo}/releases/latest`);
+      if (!res.ok) throw new Error();
+      const release = await res.json();
+      app.links.downloads = release.assets
+        .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
+        .filter(d => d.label);
+    } catch {
+      app.links.downloads = [];
+    }
+    const el = document.getElementById(`links-${app.id}`);
+    if (el) el.innerHTML = buildLinks(app);
+  });
 }
 
 // ── Render ──────────────────────────────────────────────
@@ -90,7 +89,7 @@ function cardHTML(app, index) {
       </div>
       <p class="card-desc">${app.description}</p>
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
-      <div class="card-links">${links}</div>
+      <div class="card-links" id="links-${app.id}">${links}</div>
     </article>`;
 }
 
@@ -100,6 +99,8 @@ function buildLinks(app) {
 
   if (app.type === 'flutter' && l.launch) {
     parts.push(`<button class="btn btn-primary" onclick="openModal('${l.launch}', '${app.name}')">▶ Launch</button>`);
+  } else if (app.repo && l.downloads === undefined) {
+    return '<span class="loading-ring"></span>';
   } else if (l.downloads && l.downloads.length) {
     l.downloads.forEach(d => {
       parts.push(`<a class="btn btn-primary" href="${d.url}">↓ ${d.label}</a>`);
