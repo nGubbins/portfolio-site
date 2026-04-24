@@ -8,14 +8,8 @@ const allApps = [
     type: "desktop",
     tags: ["electron", "chat", "cross-platform"],
     icon: "💬",
-    links: {
-      downloads: [
-        { label: "Windows", url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat.Setup.0.1.0.exe" },
-        { label: "macOS",   url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat-0.1.0-arm64.dmg" },
-        { label: "Linux",   url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat-0.1.0.AppImage" }
-      ],
-      github: "https://github.com/nGubbins/peerwire"
-    }
+    repo: "nGubbins/peerwire",
+    links: { github: "https://github.com/nGubbins/peerwire" }
   },
   {
     id: "ng3-player",
@@ -24,15 +18,39 @@ const allApps = [
     type: "flutter",
     tags: ["flutter", "music", "windows", "android"],
     icon: "🎵",
-    links: {
-      downloads: [
-        { label: "Windows", url: "https://github.com/nGubbins/ng3-player/releases/download/v1.6.0/ng3-v1.6.0-windows-portable.zip" },
-        { label: "Android", url: "https://github.com/nGubbins/ng3-player/releases/download/v1.6.0/ng3-v1.6.0.apk" }
-      ],
-      github: "https://github.com/nGubbins/ng3-player"
-    }
+    repo: "nGubbins/ng3-player",
+    links: { github: "https://github.com/nGubbins/ng3-player" }
   }
 ];
+
+// ── Releases ─────────────────────────────────────────────
+
+function platformLabel(filename) {
+  const n = filename.toLowerCase();
+  if (n.endsWith('.exe') || n.includes('windows')) return 'Windows';
+  if (n.endsWith('.dmg') || n.includes('macos') || n.includes('darwin') || n.includes('mac')) return 'macOS';
+  if (n.endsWith('.appimage') || n.includes('linux')) return 'Linux';
+  if (n.endsWith('.apk') || n.includes('android')) return 'Android';
+  return null;
+}
+
+async function fetchReleases() {
+  await Promise.all(
+    allApps
+      .filter(a => a.repo)
+      .map(async app => {
+        try {
+          const res = await fetch(`https://api.github.com/repos/${app.repo}/releases/latest`);
+          if (!res.ok) return;
+          const release = await res.json();
+          app.links.downloads = release.assets
+            .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
+            .filter(d => d.label);
+        } catch {}
+      })
+  );
+  render();
+}
 
 // ── Render ──────────────────────────────────────────────
 
@@ -138,3 +156,4 @@ document.addEventListener('keydown', e => {
 // ── Init ─────────────────────────────────────────────────
 
 render();
+fetchReleases();
