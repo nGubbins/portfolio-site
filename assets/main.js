@@ -3,27 +3,6 @@ let searchQuery = '';
 
 const allApps = [
   {
-    id: "peerwire",
-    name: "Peerwire",
-    description: "Lightweight chat app for desktop.",
-    type: "desktop",
-    tags: ["electron", "chat", "cross-platform"],
-    icon: "💬",
-    repo: "nGubbins/peerwire",
-    pinned: true,
-    links: { github: "https://github.com/nGubbins/peerwire" }
-  },
-  {
-    id: "urlias-cli",
-    name: "urlias",
-    description: "CLI tool for inspecting web pages.",
-    type: "desktop",
-    tags: ["python", "cli", "web"],
-    icon: "🔗",
-    repo: "nGubbins/urlias-cli",
-    links: { github: "https://github.com/nGubbins/urlias-cli" }
-  },
-  {
     id: "ng3-player",
     name: "ng3 Player",
     description: "Simple music player and library manager.",
@@ -31,18 +10,28 @@ const allApps = [
     tags: ["flutter", "music", "cross-platform"],
     icon: "🎵",
     repo: "nGubbins/ng3-player",
-    pinned: true,
     links: { github: "https://github.com/nGubbins/ng3-player" }
   },
   {
-    id: "portfolio-site",
-    name: "newp space",
-    description: "This site.",
-    type: "web",
-    tags: ["javascript", "web", "static"],
-    icon: "🌐",
-    repo: "nGubbins/portfolio-site",
-    links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
+    id: "peerwire",
+    name: "Peerwire",
+    description: "Lightweight chat app for desktop.",
+    type: "desktop",
+    tags: ["electron", "chat", "cross-platform"],
+    icon: "💬",
+    repo: "nGubbins/peerwire",
+    links: { github: "https://github.com/nGubbins/peerwire" }
+  },
+  {
+    id: "tokensplit",
+    name: "tokensplit",
+    description: "String-separated values with user-defined multi-character delimiters.",
+    type: "package",
+    tags: ["python", "library", "parsing"],
+    icon: "✂️",
+    pypi: "tokensplit",
+    repo: "nGubbins/tokensplit",
+    links: { pypi: "https://pypi.org/project/tokensplit/", github: "https://github.com/nGubbins/tokensplit" }
   },
   {
     id: "newgh",
@@ -56,15 +45,24 @@ const allApps = [
     links: { pypi: "https://pypi.org/project/newgh/", github: "https://github.com/nGubbins/newgh" }
   },
   {
-    id: "tokensplit",
-    name: "tokensplit",
-    description: "String-separated values with user-defined multi-character delimiters.",
-    type: "package",
-    tags: ["python", "library", "parsing"],
-    icon: "✂️",
-    pypi: "tokensplit",
-    repo: "nGubbins/tokensplit",
-    links: { pypi: "https://pypi.org/project/tokensplit/", github: "https://github.com/nGubbins/tokensplit" }
+    id: "urlias-cli",
+    name: "urlias",
+    description: "CLI tool for inspecting web pages.",
+    type: "desktop",
+    tags: ["python", "cli", "web"],
+    icon: "🔗",
+    repo: "nGubbins/urlias-cli",
+    links: { github: "https://github.com/nGubbins/urlias-cli" }
+  },
+  {
+    id: "portfolio-site",
+    name: "newp space",
+    description: "This site.",
+    type: "web",
+    tags: ["javascript", "web", "static"],
+    icon: "🌐",
+    repo: "nGubbins/portfolio-site",
+    links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
   }
 ];
 
@@ -145,11 +143,14 @@ async function fetchData() {
     }
 
     if (app.repo) {
-      const [repoRes, releaseRes, firstReleaseRes] = await Promise.all([
+      const fetches = [
         fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
         fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
-        fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null)
-      ]);
+      ];
+      if (!datesSet) {
+        fetches.push(fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null));
+      }
+      const [repoRes, releaseRes, firstReleaseRes] = await Promise.all(fetches);
 
       if (repoRes?.ok) {
         const { description } = await repoRes.json();
