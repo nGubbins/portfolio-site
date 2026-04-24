@@ -104,30 +104,40 @@ function platformLabel(filename) {
   return null;
 }
 
+function setDates(id, firstIso, latestIso) {
+  const el = document.getElementById(`date-${id}`);
+  if (!el) return;
+  if (!firstIso) return;
+  if (!latestIso || firstIso === latestIso) {
+    el.innerHTML = `<div>released ${formatDate(firstIso)}</div>`;
+  } else {
+    el.innerHTML = `<div>first release ${formatDate(firstIso)}</div><div>updated ${formatDate(latestIso)}</div>`;
+  }
+}
+
 async function fetchData() {
   allApps.forEach(async app => {
     if (app.pypi) {
       try {
         const res = await fetch(`https://pypi.org/pypi/${app.pypi}/json`);
         if (res.ok) {
-          const { info, urls } = await res.json();
+          const { info, releases, urls } = await res.json();
           if (info.summary) {
             app.description = info.summary;
             const el = document.getElementById(`desc-${app.id}`);
             if (el) el.textContent = info.summary;
           }
-          if (urls?.[0]?.upload_time) {
-            const dateEl = document.getElementById(`date-${app.id}`);
-            if (dateEl) dateEl.textContent = 'released ' + formatDate(urls[0].upload_time);
-          }
+          const allDates = Object.values(releases).flat().map(f => f.upload_time).filter(Boolean).sort();
+          setDates(app.id, allDates[0], urls?.[0]?.upload_time);
         }
       } catch {}
     }
 
     if (app.repo) {
-      const [repoRes, releaseRes] = await Promise.all([
+      const [repoRes, releaseRes, firstReleaseRes] = await Promise.all([
         fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
-        fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null)
+        fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
+        fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null)
       ]);
 
       if (repoRes?.ok) {
@@ -140,14 +150,23 @@ async function fetchData() {
       }
 
       app.links.downloads = [];
+      let latestDate = null;
       if (releaseRes?.ok) {
         const release = await releaseRes.json();
         app.links.downloads = release.assets
           .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
           .filter(d => d.label);
-        const dateEl = document.getElementById(`date-${app.id}`);
-        if (dateEl && release.published_at) dateEl.textContent = 'released ' + formatDate(release.published_at);
+        latestDate = release.published_at;
       }
+
+      let firstDate = null;
+      if (firstReleaseRes?.ok) {
+        const [first] = await firstReleaseRes.json();
+        firstDate = first?.published_at ?? null;
+      }
+
+      setDates(app.id, firstDate || latestDate, latestDate);
+
       const el = document.getElementById(`links-${app.id}`);
       if (el) el.innerHTML = buildLinks(app);
     }
