@@ -2,94 +2,35 @@ let activeFilter = 'all';
 
 const allApps = [
   {
-    id: "mock-1",
-    name: "File Organiser",
-    description: "Watches a folder and automatically sorts files into subdirectories by type, date, or custom rules. Never touch Downloads chaos again.",
+    id: "peerwire",
+    name: "Peerwire",
+    description: "Lightweight chat app for desktop. Available for Windows, macOS, and Linux — no account or server required.",
     type: "desktop",
-    tags: ["python", "automation", "files"],
-    icon: "📁",
-    links: { download: "#", github: "#" }
+    tags: ["electron", "chat", "cross-platform"],
+    icon: "💬",
+    links: {
+      downloads: [
+        { label: "Windows", url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat.Setup.0.1.0.exe" },
+        { label: "macOS",   url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat-0.1.0-arm64.dmg" },
+        { label: "Linux",   url: "https://github.com/nGubbins/peerwire/releases/download/v0.1.0/Peerwire.Chat-0.1.0.AppImage" }
+      ],
+      github: "https://github.com/nGubbins/peerwire"
+    }
   },
   {
-    id: "mock-2",
-    name: "Quick Invoice",
-    description: "Generate clean PDF invoices from a simple form. No subscription, no account — just fill in the fields and download.",
-    type: "web",
-    tags: ["productivity", "finance"],
-    icon: "🧾",
-    links: { demo: "#", github: "#" }
-  },
-  {
-    id: "mock-3",
-    name: "Clipboard History",
-    description: "System tray app that keeps a searchable history of everything you've copied. Keyboard shortcut to paste anything from the last 24 hours.",
-    type: "desktop",
-    tags: ["python", "productivity", "tray"],
-    icon: "📋",
-    links: { download: "#", github: "#" }
-  },
-  {
-    id: "mock-4",
-    name: "CSV Cleaner",
-    description: "Drag in a messy CSV, pick transformations (trim whitespace, fix casing, dedupe rows), and get a clean file back. No pandas knowledge required.",
-    type: "web",
-    tags: ["data", "utility"],
-    icon: "🧹",
-    links: { demo: "#", github: "#" }
-  },
-  {
-    id: "mock-5",
-    name: "Focus Timer",
-    description: "Minimal Pomodoro timer that blocks distracting sites during work sessions and logs how much deep work you did each day.",
-    type: "desktop",
-    tags: ["python", "productivity", "focus"],
-    icon: "⏱️",
-    links: { download: "#", github: "#" }
-  },
-  {
-    id: "mock-6",
-    name: "Colour Palette Extractor",
-    description: "Upload any image and instantly get its dominant colour palette as hex codes, ready to copy into your design tool.",
-    type: "web",
-    tags: ["design", "utility"],
-    icon: "🎨",
-    links: { demo: "#", github: "#" }
-  },
-  {
-    id: "mock-7",
-    name: "Batch Renamer",
-    description: "Rename hundreds of files at once using pattern matching, numbering sequences, or find-and-replace. Preview changes before committing.",
-    type: "desktop",
-    tags: ["python", "files", "automation"],
-    icon: "✏️",
-    links: { download: "#", github: "#" }
-  },
-  {
-    id: "mock-8",
-    name: "Markdown Previewer",
-    description: "Paste markdown on the left, see the rendered output on the right. Includes export to clean HTML or PDF with one click.",
-    type: "web",
-    tags: ["writing", "utility"],
-    icon: "📝",
-    links: { demo: "#", github: "#" }
-  },
-  {
-    id: "mock-9",
-    name: "System Monitor",
-    description: "Lightweight tray app showing CPU, RAM, and disk usage at a glance. Alerts you when something is eating your resources.",
-    type: "desktop",
-    tags: ["python", "system", "tray"],
-    icon: "📊",
-    links: { download: "#", github: "#" }
-  },
-  {
-    id: "mock-flutter",
-    name: "Flutter App",
-    description: "A cross-platform Flutter app compiled for the web. Runs right here in the browser — no install required.",
+    id: "ng3-player",
+    name: "ng3 Player",
+    description: "Simple music player and library manager. Available for Windows and Android.",
     type: "flutter",
-    tags: ["flutter", "dart", "cross-platform"],
-    icon: "🐦",
-    links: { launch: "apps/mock-flutter/", github: "#" }
+    tags: ["flutter", "music", "windows", "android"],
+    icon: "🎵",
+    links: {
+      downloads: [
+        { label: "Windows", url: "https://github.com/nGubbins/ng3-player/releases/download/v1.6.0/ng3-v1.6.0-windows-portable.zip" },
+        { label: "Android", url: "https://github.com/nGubbins/ng3-player/releases/download/v1.6.0/ng3-v1.6.0.apk" }
+      ],
+      github: "https://github.com/nGubbins/ng3-player"
+    }
   }
 ];
 
@@ -140,18 +81,16 @@ function buildLinks(app) {
   const parts = [];
 
   if (app.type === 'flutter' && l.launch) {
-    parts.push(`<button class="btn btn-primary" onclick="openModal('${l.launch}', '${app.name}')">
-      ▶ Launch
-    </button>`);
-  }
-  if (app.type === 'web' && l.demo) {
+    parts.push(`<button class="btn btn-primary" onclick="openModal('${l.launch}', '${app.name}')">▶ Launch</button>`);
+  } else if (l.downloads && l.downloads.length) {
+    l.downloads.forEach(d => {
+      parts.push(`<a class="btn btn-primary" href="${d.url}">↓ ${d.label}</a>`);
+    });
+  } else if (app.type === 'web' && l.demo) {
     parts.push(`<a class="btn btn-primary" href="${l.demo}" target="_blank" rel="noopener">↗ Live Demo</a>`);
   }
-  if (app.type === 'desktop' && l.download) {
-    parts.push(`<a class="btn btn-primary" href="${l.download}" target="_blank" rel="noopener">↓ Download</a>`);
-  }
   if (l.github) {
-    parts.push(`<a class="btn btn-ghost" href="${l.github}" target="_blank" rel="noopener">GitHub</a>`);
+    parts.push(`<a class="btn btn-ghost" href="${l.github}" target="_blank" rel="noopener">Source</a>`);
   }
 
   return parts.join('');
