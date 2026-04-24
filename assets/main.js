@@ -44,11 +44,13 @@ function platformLabel(filename) {
   return null;
 }
 
-function setDates(id, firstIso, latestIso) {
+function setDates(id, firstIso, latestIso, pushedAt) {
   const el = document.getElementById(`date-${id}`);
   if (!el) return;
   if (!firstIso && !latestIso) {
-    el.innerHTML = `<div class="date-source-only">source only</div>`;
+    el.innerHTML = pushedAt
+      ? `<div class="date-source-only">updated ${formatDate(pushedAt)}</div>`
+      : `<div class="date-source-only">source only</div>`;
     return;
   }
   if (!latestIso || firstIso === latestIso) {
@@ -80,7 +82,7 @@ async function fetchData() {
         const linksEl = document.getElementById(`links-${app.id}`);
         if (linksEl) linksEl.innerHTML = buildLinks(app);
         if (!app.pypi) {
-          setDates(app.id, cached.firstPublishedAt || cached.publishedAt, cached.publishedAt);
+          setDates(app.id, cached.firstPublishedAt || cached.publishedAt, cached.publishedAt, cached.pushedAt);
         }
       } else {
         // Fallback: live API (development / cache miss)
@@ -90,8 +92,10 @@ async function fetchData() {
             fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
             fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null)
           ]);
+          let pushedAt = null;
           if (repoRes?.ok) {
-            const { description } = await repoRes.json();
+            const { description, pushed_at } = await repoRes.json();
+            pushedAt = pushed_at || null;
             if (description && !app.pypi) {
               app.description = description;
               const el = document.getElementById(`desc-${app.id}`);
@@ -113,7 +117,7 @@ async function fetchData() {
               const [first] = await firstRes.json();
               firstDate = first?.published_at ?? null;
             }
-            setDates(app.id, firstDate || latestDate, latestDate);
+            setDates(app.id, firstDate || latestDate, latestDate, pushedAt);
           }
           const linksEl = document.getElementById(`links-${app.id}`);
           if (linksEl) linksEl.innerHTML = buildLinks(app);
@@ -148,6 +152,7 @@ function render() {
   const q = searchQuery.toLowerCase();
 
   const pinned = allApps.filter(a => a.pinned);
+  document.querySelector('.pinned-section').hidden = pinned.length === 0;
   pinnedGrid.innerHTML = pinned.map((app, i) => cardHTML(app, i)).join('');
 
   const rest = allApps

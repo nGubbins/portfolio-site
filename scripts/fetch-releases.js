@@ -46,7 +46,8 @@ for (const repo of repos) {
                               .filter(d => d.label)
                           : [],
       publishedAt:      latestRelease?.published_at || null,
-      firstPublishedAt: firstRelease?.published_at  || null
+      firstPublishedAt: firstRelease?.published_at  || null,
+      pushedAt:         repoData.pushed_at          || null
     };
 
     console.log(`✓ ${repo} (${result[repo].downloads.length} assets)`);

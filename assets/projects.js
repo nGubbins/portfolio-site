@@ -19,6 +19,16 @@
 
 const allApps = [
   {
+    id: "portfolio-site",
+    name: "newp space",
+    description: "This site.",
+    type: "web",
+    tags: ["javascript", "web", "static"],
+    icon: "🌐",
+    repo: "nGubbins/portfolio-site",
+    links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
+  },
+  {
     id: "ng3-player",
     name: "ng3 Player",
     description: "Simple music player and library manager.",
@@ -70,14 +80,4 @@ const allApps = [
     repo: "nGubbins/urlias-cli",
     links: { github: "https://github.com/nGubbins/urlias-cli" }
   },
-  {
-    id: "portfolio-site",
-    name: "newp space",
-    description: "This site.",
-    type: "web",
-    tags: ["javascript", "web", "static"],
-    icon: "🌐",
-    repo: "nGubbins/portfolio-site",
-    links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
-  }
 ];
