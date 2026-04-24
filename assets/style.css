@@ -321,6 +321,11 @@ nav a:hover {
   opacity: 0.7;
 }
 
+.date-source-only {
+  font-style: italic;
+  opacity: 0.5;
+}
+
 .card-links {
   display: flex;
   flex-wrap: wrap;

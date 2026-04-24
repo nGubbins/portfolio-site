@@ -52,7 +52,8 @@ const allApps = [
     tags: ["python", "cli", "devtools"],
     icon: "🏗️",
     pypi: "newgh",
-    links: { pypi: "https://pypi.org/project/newgh/" }
+    repo: "nGubbins/newgh",
+    links: { pypi: "https://pypi.org/project/newgh/", github: "https://github.com/nGubbins/newgh" }
   },
   {
     id: "tokensplit",
@@ -62,7 +63,8 @@ const allApps = [
     tags: ["python", "library", "parsing"],
     icon: "✂️",
     pypi: "tokensplit",
-    links: { pypi: "https://pypi.org/project/tokensplit/" }
+    repo: "nGubbins/tokensplit",
+    links: { pypi: "https://pypi.org/project/tokensplit/", github: "https://github.com/nGubbins/tokensplit" }
   }
 ];
 
@@ -110,7 +112,10 @@ function platformLabel(filename) {
 function setDates(id, firstIso, latestIso) {
   const el = document.getElementById(`date-${id}`);
   if (!el) return;
-  if (!firstIso) return;
+  if (!firstIso && !latestIso) {
+    el.innerHTML = `<div class="date-source-only">source only</div>`;
+    return;
+  }
   if (!latestIso || firstIso === latestIso) {
     el.innerHTML = `<div>released ${formatDate(firstIso)}</div>`;
   } else {
@@ -120,6 +125,8 @@ function setDates(id, firstIso, latestIso) {
 
 async function fetchData() {
   allApps.forEach(async app => {
+    let datesSet = false;
+
     if (app.pypi) {
       try {
         const res = await fetch(`https://pypi.org/pypi/${app.pypi}/json`);
@@ -132,6 +139,7 @@ async function fetchData() {
           }
           const allDates = Object.values(releases).flat().map(f => f.upload_time).filter(Boolean).sort();
           setDates(app.id, allDates[0], urls?.[0]?.upload_time);
+          datesSet = true;
         }
       } catch {}
     }
@@ -162,13 +170,14 @@ async function fetchData() {
         latestDate = release.published_at;
       }
 
-      let firstDate = null;
-      if (firstReleaseRes?.ok) {
-        const [first] = await firstReleaseRes.json();
-        firstDate = first?.published_at ?? null;
+      if (!datesSet) {
+        let firstDate = null;
+        if (firstReleaseRes?.ok) {
+          const [first] = await firstReleaseRes.json();
+          firstDate = first?.published_at ?? null;
+        }
+        setDates(app.id, firstDate || latestDate, latestDate);
       }
-
-      setDates(app.id, firstDate || latestDate, latestDate);
 
       const el = document.getElementById(`links-${app.id}`);
       if (el) el.innerHTML = buildLinks(app);
