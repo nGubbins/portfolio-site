@@ -122,9 +122,69 @@ function setDates(id, firstIso, latestIso) {
 }
 
 async function fetchData() {
-  allApps.forEach(async app => {
-    let datesSet = false;
+  // Load pre-built release data (generated at deploy time, no rate limit)
+  let cache = {};
+  try {
+    const res = await fetch('assets/releases.json');
+    if (res.ok) cache = await res.json();
+  } catch {}
 
+  allApps.forEach(async app => {
+    // GitHub data: served from static cache — unlimited concurrent users
+    if (app.repo) {
+      const cached = cache[app.repo];
+      if (cached) {
+        if (cached.description) {
+          app.description = cached.description;
+          const el = document.getElementById(`desc-${app.id}`);
+          if (el) el.textContent = cached.description;
+        }
+        app.links.downloads = cached.downloads || [];
+        const linksEl = document.getElementById(`links-${app.id}`);
+        if (linksEl) linksEl.innerHTML = buildLinks(app);
+        if (!app.pypi) {
+          setDates(app.id, cached.firstPublishedAt || cached.publishedAt, cached.publishedAt);
+        }
+      } else {
+        // Fallback: live API (development / cache miss)
+        try {
+          const [repoRes, releaseRes, firstRes] = await Promise.all([
+            fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
+            fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
+            fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null)
+          ]);
+          if (repoRes?.ok) {
+            const { description } = await repoRes.json();
+            if (description && !app.pypi) {
+              app.description = description;
+              const el = document.getElementById(`desc-${app.id}`);
+              if (el) el.textContent = description;
+            }
+          }
+          app.links.downloads = [];
+          let latestDate = null;
+          if (releaseRes?.ok) {
+            const release = await releaseRes.json();
+            app.links.downloads = release.assets
+              .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
+              .filter(d => d.label);
+            latestDate = release.published_at;
+          }
+          if (!app.pypi) {
+            let firstDate = null;
+            if (firstRes?.ok) {
+              const [first] = await firstRes.json();
+              firstDate = first?.published_at ?? null;
+            }
+            setDates(app.id, firstDate || latestDate, latestDate);
+          }
+          const linksEl = document.getElementById(`links-${app.id}`);
+          if (linksEl) linksEl.innerHTML = buildLinks(app);
+        } catch {}
+      }
+    }
+
+    // PyPI data: always live (no meaningful rate limit, low traffic)
     if (app.pypi) {
       try {
         const res = await fetch(`https://pypi.org/pypi/${app.pypi}/json`);
@@ -137,51 +197,8 @@ async function fetchData() {
           }
           const allDates = Object.values(releases).flat().map(f => f.upload_time).filter(Boolean).sort();
           setDates(app.id, allDates[0], urls?.[0]?.upload_time);
-          datesSet = true;
         }
       } catch {}
-    }
-
-    if (app.repo) {
-      const fetches = [
-        fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
-        fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
-      ];
-      if (!datesSet) {
-        fetches.push(fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null));
-      }
-      const [repoRes, releaseRes, firstReleaseRes] = await Promise.all(fetches);
-
-      if (repoRes?.ok) {
-        const { description } = await repoRes.json();
-        if (description) {
-          app.description = description;
-          const el = document.getElementById(`desc-${app.id}`);
-          if (el) el.textContent = description;
-        }
-      }
-
-      app.links.downloads = [];
-      let latestDate = null;
-      if (releaseRes?.ok) {
-        const release = await releaseRes.json();
-        app.links.downloads = release.assets
-          .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
-          .filter(d => d.label);
-        latestDate = release.published_at;
-      }
-
-      if (!datesSet) {
-        let firstDate = null;
-        if (firstReleaseRes?.ok) {
-          const [first] = await firstReleaseRes.json();
-          firstDate = first?.published_at ?? null;
-        }
-        setDates(app.id, firstDate || latestDate, latestDate);
-      }
-
-      const el = document.getElementById(`links-${app.id}`);
-      if (el) el.innerHTML = buildLinks(app);
     }
   });
 }
