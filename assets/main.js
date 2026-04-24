@@ -27,7 +27,7 @@ const allApps = [
     name: "ng3 Player",
     description: "Simple music player and library manager.",
     type: "flutter",
-    tags: ["flutter", "music", "windows", "android"],
+    tags: ["flutter", "music", "cross-platform"],
     icon: "🎵",
     repo: "nGubbins/ng3-player",
     links: { github: "https://github.com/nGubbins/ng3-player" }
@@ -37,7 +37,7 @@ const allApps = [
     name: "newp space",
     description: "This site.",
     type: "web",
-    tags: ["html", "css", "js"],
+    tags: ["javascript", "web", "static"],
     icon: "🌐",
     repo: "nGubbins/portfolio-site",
     links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
@@ -47,7 +47,7 @@ const allApps = [
     name: "newgh",
     description: "Sets up a Python project repo for modern development.",
     type: "package",
-    tags: ["python", "cli", "scaffolding"],
+    tags: ["python", "cli", "devtools"],
     icon: "🏗️",
     pypi: "newgh",
     links: { pypi: "https://pypi.org/project/newgh/" }
@@ -57,7 +57,7 @@ const allApps = [
     name: "tokensplit",
     description: "String-separated values with user-defined multi-character delimiters.",
     type: "package",
-    tags: ["python", "parsing", "strings"],
+    tags: ["python", "library", "parsing"],
     icon: "✂️",
     pypi: "tokensplit",
     links: { pypi: "https://pypi.org/project/tokensplit/" }
