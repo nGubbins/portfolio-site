@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>newp space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    body {
+      background: transparent;
+      padding: 0.75rem;
+      min-height: unset;
+    }
+    .card { animation: none; }
+    .embed-credit {
+      text-align: right;
+      margin-top: 0.4rem;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+    .embed-credit a {
+      color: inherit;
+      text-decoration: none;
+      transition: opacity var(--transition);
+    }
+    .embed-credit a:hover { opacity: 1; color: var(--text); }
+  </style>
+</head>
+<body>
+  <div id="card-container"></div>
+  <p class="embed-credit"><a href="https://newp.space" target="_blank" rel="noopener">newp.space ↗</a></p>
+  <script src="assets/projects.js"></script>
+  <script src="assets/main.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get('id');
+    const app = allApps.find(a => a.id === id);
+    if (app) {
+      document.title = app.name + ' — newp space';
+      document.getElementById('card-container').innerHTML = cardHTML(app, 0);
+      fetchData();
+    } else {
+      document.getElementById('card-container').innerHTML =
+        '<p style="padding:1rem;color:var(--text-muted)">Project not found.</p>';
+    }
+  </script>
+</body>
+</html>

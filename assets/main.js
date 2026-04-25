@@ -187,7 +187,7 @@ function cardHTML(app, index) {
     </div>` : '';
 
   return `
-    <article class="card" style="animation-delay:${index * 0.04}s">
+    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s">
       <div class="card-header">
         <div class="card-icon">${app.icon || '📦'}</div>
         <div class="card-title-group">
@@ -239,22 +239,12 @@ function setFilter(type) {
   render();
 }
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => setFilter(btn.dataset.filter));
-});
-
-document.getElementById('search').addEventListener('input', e => {
-  searchQuery = e.target.value;
-  render();
-});
-
 // ── Flutter modal ────────────────────────────────────────
 
-const modal = document.getElementById('app-modal');
-const modalFrame = document.getElementById('modal-frame');
-const modalTitle = document.getElementById('modal-title');
+let modal, modalFrame, modalTitle;
 
 function openModal(src, name) {
+  if (!modal) return;
   modalFrame.src = src;
   modalTitle.textContent = name;
   modal.hidden = false;
@@ -262,18 +252,47 @@ function openModal(src, name) {
 }
 
 function closeModal() {
+  if (!modal) return;
   modal.hidden = true;
   modalFrame.src = '';
   document.body.style.overflow = '';
 }
 
-document.getElementById('modal-close').addEventListener('click', closeModal);
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !modal.hidden) closeModal();
-});
-
 // ── Init ─────────────────────────────────────────────────
 
-render();
-fetchData();
+if (document.getElementById('app-grid')) {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+  });
+
+  document.getElementById('search').addEventListener('input', e => {
+    searchQuery = e.target.value;
+    render();
+  });
+
+  modal = document.getElementById('app-modal');
+  modalFrame = document.getElementById('modal-frame');
+  modalTitle = document.getElementById('modal-title');
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+
+  render();
+  fetchData();
+
+  const scrollToHash = () => {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('card--highlighted');
+    setTimeout(() => el.classList.remove('card--highlighted'), 2000);
+  };
+
+  scrollToHash();
+  window.addEventListener('hashchange', scrollToHash);
+}
