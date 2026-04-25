@@ -157,7 +157,7 @@ function render() {
 
   const rest = allApps
     .filter(a => !a.pinned)
-    .filter(a => activeFilter === 'all' || a.type === activeFilter)
+    .filter(a => activeFilter === 'all' || (activeFilter === 'pypi' ? !!a.pypi : a.type === activeFilter))
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
   grid.innerHTML = rest.length
@@ -220,7 +220,7 @@ function buildLinks(app) {
     parts.push(`<a class="btn btn-primary" href="${l.demo}" target="_blank" rel="noopener">↗ Live Demo</a>`);
   }
   if (l.pypi) {
-    parts.push(`<a class="btn btn-ghost" href="${l.pypi}" target="_blank" rel="noopener">PyPI</a>`);
+    parts.push(`<a class="btn btn-pypi" href="${l.pypi}" target="_blank" rel="noopener">PyPI</a>`);
   }
   if (l.github) {
     parts.push(`<a class="btn btn-ghost" href="${l.github}" target="_blank" rel="noopener">Source</a>`);

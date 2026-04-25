@@ -16,6 +16,7 @@
   --text-muted: #5e7a99;
   --green: #22c55e;
   --cyan: #22d3ee;
+  --yellow: #ffd43b;
   --radius: 6px;
   --transition: 0.16s ease;
 }
@@ -367,6 +368,18 @@ nav a:hover {
 .btn-ghost:hover {
   border-color: var(--accent);
   color: var(--text);
+}
+
+.btn-pypi {
+  background: #ffd43b1a;
+  border: 1px solid #ffd43b40;
+  color: var(--yellow);
+}
+
+.btn-pypi:hover {
+  background: #ffd43b2a;
+  border-color: var(--yellow);
+  color: var(--yellow);
 }
 
 /* ── Info button & install panel ── */
