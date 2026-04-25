@@ -71,6 +71,17 @@ const allApps = [
     links: { pypi: "https://pypi.org/project/newgh/", github: "https://github.com/nGubbins/newgh" }
   },
   {
+    id: "quicksec",
+    name: "quicksec",
+    description: "Command-line tool that audits website security.",
+    type: "package",
+    tags: ["python", "cli", "security"],
+    icon: "🔒",
+    pypi: "quicksec",
+    repo: "nGubbins/quicksec",
+    links: { pypi: "https://pypi.org/project/quicksec/", github: "https://github.com/nGubbins/quicksec" }
+  },
+  {
     id: "urlias-cli",
     name: "urlias",
     description: "CLI tool for inspecting web pages.",
