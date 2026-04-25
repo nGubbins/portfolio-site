@@ -187,7 +187,7 @@ function cardHTML(app, index) {
     </div>` : '';
 
   return `
-    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s">
+    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s" onclick="history.replaceState(null,'','#${app.id}')">
       <div class="card-header">
         <div class="card-icon">${app.icon || '📦'}</div>
         <div class="card-title-group">
