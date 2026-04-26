@@ -276,6 +276,7 @@ nav a:hover {
   gap: 0.75rem;
   transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
   animation: fadeUp 0.25s ease both;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -288,6 +289,66 @@ nav a:hover {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-dim);
 }
+
+.card--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.card--selected:hover {
+  transform: none;
+}
+
+.card-expand-panel {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.6rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  animation: panelIn 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.expand-panel--out {
+  animation: panelOut 0.2s ease both;
+  pointer-events: none;
+}
+
+.expand-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.expand-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: panelSlideIn 0.3s ease 0.1s both;
+}
+
+.expand-mid {
+  /* reserved for future content */
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes panelOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes panelSlideIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }

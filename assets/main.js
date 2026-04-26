@@ -1,6 +1,7 @@
 let activeFilter = 'all';
 let activeMadeFilter = 'all';
 let searchQuery = '';
+let expandedId = null;
 
 // allApps is defined in assets/projects.js — edit that file to manage your projects.
 
@@ -162,6 +163,9 @@ function render() {
     .filter(a => activeMadeFilter === 'all' || a.made === activeMadeFilter)
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
+  expandedId = null;
+  document.getElementById('card-expand-panel')?.remove();
+
   grid.innerHTML = rest.length
     ? rest.map((app, i) => cardHTML(app, i)).join('')
     : `<div class="empty-state"><span>🔍</span> No projects match.</div>`;
@@ -198,7 +202,7 @@ function cardHTML(app, index) {
     </div>` : '';
 
   return `
-    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s" onclick="history.replaceState(null,'','#${app.id}')">
+    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s">
       <div class="card-header">
         <div class="card-icon">${app.icon || '📦'}</div>
         <div class="card-title-group">
@@ -270,6 +274,83 @@ function setMadeFilter(made) {
   render();
 }
 
+// ── Card expand ─────────────────────────────────────────
+
+function getLastCardInRow(card) {
+  const allCards = [...card.parentNode.querySelectorAll('.card')];
+  const top = card.getBoundingClientRect().top;
+  const row = allCards.filter(c => Math.abs(c.getBoundingClientRect().top - top) < 5);
+  return row[row.length - 1];
+}
+
+function buildExpandPanel(app) {
+  const badgeLabels = { game: '🎮 Game', web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package', library: '📚 Library', cli: '⌨️ CLI' };
+  const madeLabels  = { handmade: '🖐️ Handmade', hybrid: '⚡ Hybrid', ai: '🤖 AI' };
+  const madeBadge   = app.made ? `<span class="made-badge ${app.made}">${madeLabels[app.made] || app.made}</span>` : '';
+  const typeBadge   = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
+  const tags        = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const desc        = document.getElementById(`desc-${app.id}`)?.textContent || app.description;
+  const linksHTML   = document.getElementById(`links-${app.id}`)?.innerHTML || '';
+  const dateHTML    = document.getElementById(`date-${app.id}`)?.innerHTML  || '';
+  const pipLine     = app.pypi ? `
+    <div class="card-pip">
+      <code>pip install ${app.pypi}</code>
+      <button class="copy-btn" onclick="copyInstall(this, 'pip install ${app.pypi}')">copy</button>
+    </div>` : '';
+
+  return `
+    <div class="expand-left">
+      <div class="card-header">
+        <div class="card-icon">${app.icon || '📦'}</div>
+        <div class="card-title-group">
+          <div class="card-title-line">
+            <div class="card-title">${app.name}</div>
+            ${madeBadge}
+          </div>
+          ${typeBadge}
+        </div>
+      </div>
+      <p class="card-desc">${desc}</p>
+    </div>
+    <div class="expand-mid"></div>
+    <div class="expand-right">
+      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+      <div class="card-links">${linksHTML}</div>
+      ${pipLine}
+      <div class="card-date">${dateHTML}</div>
+    </div>`;
+}
+
+function collapseExpanded() {
+  if (!expandedId) return;
+  const card = document.getElementById(expandedId);
+  expandedId = null;
+  card?.classList.remove('card--selected');
+  const panel = document.getElementById('card-expand-panel');
+  if (panel) {
+    panel.classList.add('expand-panel--out');
+    setTimeout(() => panel.remove(), 220);
+  }
+}
+
+function expandCard(id) {
+  if (expandedId === id) { collapseExpanded(); return; }
+  collapseExpanded();
+  const card = document.getElementById(id);
+  if (!card) return;
+  const app = allApps.find(a => a.id === id);
+  if (!app) return;
+
+  const panel = document.createElement('div');
+  panel.id = 'card-expand-panel';
+  panel.className = 'card-expand-panel';
+  panel.innerHTML = buildExpandPanel(app);
+  getLastCardInRow(card).after(panel);
+
+  card.classList.add('card--selected');
+  expandedId = id;
+}
+
 // ── Flutter modal ────────────────────────────────────────
 
 let modal, modalFrame, modalTitle;
@@ -312,7 +393,22 @@ if (document.getElementById('app-grid')) {
   document.getElementById('modal-close').addEventListener('click', closeModal);
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !modal.hidden) closeModal();
+    if (e.key === 'Escape') {
+      if (!modal.hidden) closeModal();
+      else collapseExpanded();
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (e.target.closest('a, button')) return;
+    if (e.target.closest('#card-expand-panel')) return;
+    const card = e.target.closest('.card');
+    if (card) {
+      history.replaceState(null, '', '#' + card.id);
+      expandCard(card.id);
+    } else {
+      collapseExpanded();
+    }
   });
 
   const statsEl = document.getElementById('hero-stats');
@@ -351,9 +447,10 @@ if (document.getElementById('app-grid')) {
     if (!id) return;
     const el = document.getElementById(id);
     if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('card--highlighted');
-    setTimeout(() => el.classList.remove('card--highlighted'), 2000);
+    requestAnimationFrame(() => {
+      expandCard(id);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   };
 
   scrollToHash();
