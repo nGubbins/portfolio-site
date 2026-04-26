@@ -166,8 +166,8 @@ function render() {
 }
 
 function cardHTML(app, index) {
-  const badges = { web: '🌐 Web', desktop: '🖥️ Desktop', flutter: '🐦 Flutter', package: '📦 Package' };
-  const typeBadge = `<span class="type-badge ${app.type}">${badges[app.type] || app.type}</span>`;
+  const badgeLabels = { web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package' };
+  const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
 
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const links = buildLinks(app);
