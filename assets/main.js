@@ -285,8 +285,11 @@ function collapseExpanded() {
   const card = document.getElementById(expandedId);
   expandedId = null;
   if (!card) return;
-  card.classList.remove('card--expanded');
-  card.parentNode.style.gridAutoFlow = '';
+  card.classList.add('card--collapsing');
+  setTimeout(() => {
+    card.classList.remove('card--expanded', 'card--collapsing');
+    card.parentNode.style.gridAutoFlow = '';
+  }, 200);
 }
 
 function expandCard(id) {
