@@ -278,6 +278,30 @@ function setMadeFilter(made) {
   render();
 }
 
+// ── Card expand ─────────────────────────────────────────
+
+function collapseExpanded() {
+  if (!expandedId) return;
+  const card = document.getElementById(expandedId);
+  if (card) {
+    card.classList.remove('card--expanded');
+    card.parentNode.insertBefore(card, card._expandSibling);
+    delete card._expandSibling;
+  }
+  expandedId = null;
+}
+
+function expandCard(id) {
+  if (expandedId === id) return;
+  collapseExpanded();
+  const card = document.getElementById(id);
+  if (!card) return;
+  card._expandSibling = card.nextSibling;
+  card.parentNode.appendChild(card);
+  card.classList.add('card--expanded');
+  expandedId = id;
+}
+
 // ── Flutter modal ────────────────────────────────────────
 
 let modal, modalFrame, modalTitle;
@@ -322,10 +346,7 @@ if (document.getElementById('app-grid')) {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       if (!modal.hidden) closeModal();
-      else if (expandedId) {
-        document.getElementById(expandedId)?.classList.remove('card--expanded');
-        expandedId = null;
-      }
+      else collapseExpanded();
     }
   });
 
@@ -333,17 +354,10 @@ if (document.getElementById('app-grid')) {
     if (e.target.closest('a, button')) return;
     const card = e.target.closest('.card');
     if (card) {
-      const id = card.id;
-      history.replaceState(null, '', '#' + id);
-      if (expandedId === id) return;
-      if (expandedId) document.getElementById(expandedId)?.classList.remove('card--expanded');
-      card.classList.add('card--expanded');
-      expandedId = id;
+      history.replaceState(null, '', '#' + card.id);
+      expandCard(card.id);
     } else {
-      if (expandedId) {
-        document.getElementById(expandedId)?.classList.remove('card--expanded');
-        expandedId = null;
-      }
+      collapseExpanded();
     }
   });
 
