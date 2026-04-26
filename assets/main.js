@@ -208,15 +208,23 @@ function buildLinks(app) {
   const l = app.links || {};
   const parts = [];
 
-  if (app.type === 'flutter' && l.launch) {
-    parts.push(`<button class="btn btn-primary" onclick="openModal('${l.launch}', '${app.name}')">▶ Launch</button>`);
-  } else if (app.repo && l.downloads === undefined) {
+  if (app.repo && l.downloads === undefined) {
     return '<span class="loading-ring"></span>';
-  } else if (l.downloads && l.downloads.length) {
+  }
+
+  if (l.launch) {
+    parts.push(`<button class="btn btn-primary" onclick="openModal('${l.launch}', '${app.name}')">▶ Launch</button>`);
+  }
+
+  if (l.play) {
+    parts.push(`<a class="btn btn-primary" href="${l.play}" target="_blank" rel="noopener">▶ Play</a>`);
+  }
+
+  if (l.downloads && l.downloads.length) {
     l.downloads.forEach(d => {
       parts.push(`<a class="btn btn-primary" href="${d.url}">↓ ${d.label}</a>`);
     });
-  } else if (app.type === 'web' && l.demo) {
+  } else if (!l.launch && app.type === 'web' && l.demo) {
     parts.push(`<a class="btn btn-primary" href="${l.demo}" target="_blank" rel="noopener">↗ Live Demo</a>`);
   }
   if (l.pypi) {
