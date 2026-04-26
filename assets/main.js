@@ -447,9 +447,10 @@ if (document.getElementById('app-grid')) {
     if (!id) return;
     const el = document.getElementById(id);
     if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('card--highlighted');
-    setTimeout(() => el.classList.remove('card--highlighted'), 2000);
+    requestAnimationFrame(() => {
+      expandCard(id);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
   };
 
   scrollToHash();
