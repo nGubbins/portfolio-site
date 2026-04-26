@@ -438,6 +438,18 @@ nav a:hover {
   color: var(--accent);
 }
 
+.card-pip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.45rem 0.6rem;
+  margin-top: 0.4rem;
+}
+
 .card-install {
   display: none;
   background: var(--surface-2);

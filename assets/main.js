@@ -172,18 +172,25 @@ function cardHTML(app, index) {
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const links = buildLinks(app);
   const lines = installLines(app);
+  const gitLines = lines.filter(l => l.startsWith('git clone'));
 
-  const infoBtn = lines.length
+  const infoBtn = gitLines.length
     ? `<button class="info-btn" id="info-btn-${app.id}" onclick="toggleInstall('${app.id}')" aria-label="Install instructions">i</button>`
     : '';
 
-  const installPanel = lines.length ? `
+  const installPanel = gitLines.length ? `
     <div class="card-install" id="install-${app.id}">
-      ${lines.map(cmd => `
+      ${gitLines.map(cmd => `
         <div class="install-line">
           <code>${cmd}</code>
           <button class="copy-btn" onclick="copyInstall(this, '${cmd}')">copy</button>
         </div>`).join('')}
+    </div>` : '';
+
+  const pipLine = app.pypi ? `
+    <div class="card-pip">
+      <code>pip install ${app.pypi}</code>
+      <button class="copy-btn" onclick="copyInstall(this, 'pip install ${app.pypi}')">copy</button>
     </div>` : '';
 
   return `
@@ -200,6 +207,7 @@ function cardHTML(app, index) {
       <p class="card-desc" id="desc-${app.id}">${app.description}</p>
       ${tags ? `<div class="card-tags">${tags}</div>` : ''}
       <div class="card-links" id="links-${app.id}">${links}</div>
+      ${pipLine}
       <div class="card-date" id="date-${app.id}"></div>
     </article>`;
 }
