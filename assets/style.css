@@ -125,6 +125,7 @@ nav a:hover {
 .hero-stats-row {
   display: flex;
   align-items: stretch;
+  justify-content: center;
 }
 
 .hero-stats-row--sub {
