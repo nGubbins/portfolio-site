@@ -34,7 +34,7 @@ const allApps = [
     name: "GridRaider",
     description: "Grid-based strategy game.",
     type: "desktop",
-    platforms: ["desktop", "web"],
+    platforms: ["game", "desktop", "web"],
     tags: ["game", "strategy", "grid"],
     icon: "🎮",
     repo: "nGubbins/gridraider",

@@ -278,6 +278,12 @@ nav a:hover {
   text-transform: uppercase;
 }
 
+.type-badge.game {
+  background: #ec489918;
+  color: #ec4899;
+  border: 1px solid #ec489930;
+}
+
 .type-badge.web {
   background: #1d6ff218;
   color: var(--accent);
