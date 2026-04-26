@@ -252,6 +252,31 @@ nav a:hover {
   color: #fff;
 }
 
+/* ── Category-coloured filter buttons ── */
+/* Inactive: coloured text hint */
+.filter-btn[data-filter="game"]    { color: #ec4899; }
+.filter-btn[data-filter="web"]     { color: var(--accent); }
+.filter-btn[data-filter="desktop"] { color: #22d3ee; }
+.filter-btn[data-filter="android"] { color: #3ddc84; }
+.filter-btn[data-filter="package"] { color: #f97316; }
+.filter-btn[data-filter="library"] { color: #a855f7; }
+.filter-btn[data-filter="cli"]     { color: #eab308; }
+.made-filter-btn[data-made="ai"]       { color: #0ea5e9; }
+.made-filter-btn[data-made="hybrid"]   { color: #6366f1; }
+.made-filter-btn[data-made="handmade"] { color: #84cc16; }
+
+/* Active: full badge style */
+.filter-btn[data-filter="game"].active    { background: #ec489920; border-color: #ec4899; color: #ec4899; }
+.filter-btn[data-filter="web"].active     { background: #1d6ff220; border-color: var(--accent); color: var(--accent); }
+.filter-btn[data-filter="desktop"].active { background: #22d3ee20; border-color: #22d3ee; color: #22d3ee; }
+.filter-btn[data-filter="android"].active { background: #3ddc8420; border-color: #3ddc84; color: #3ddc84; }
+.filter-btn[data-filter="package"].active { background: #f9731620; border-color: #f97316; color: #f97316; }
+.filter-btn[data-filter="library"].active { background: #a855f720; border-color: #a855f7; color: #a855f7; }
+.filter-btn[data-filter="cli"].active     { background: #eab30820; border-color: #eab308; color: #eab308; }
+.made-filter-btn[data-made="ai"].active       { background: #0ea5e920; border-color: #0ea5e9; border-style: dashed; color: #0ea5e9; }
+.made-filter-btn[data-made="hybrid"].active   { background: #6366f120; border-color: #6366f1; border-style: dashed; color: #6366f1; }
+.made-filter-btn[data-made="handmade"].active { background: #84cc1620; border-color: #84cc16; border-style: dashed; color: #84cc16; }
+
 /* ── App grid ── */
 .grid-section {
   max-width: 1100px;
