@@ -1,6 +1,7 @@
 let activeFilter = 'all';
 let activeMadeFilter = 'all';
 let searchQuery = '';
+let expandedId = null;
 
 // allApps is defined in assets/projects.js — edit that file to manage your projects.
 
@@ -162,6 +163,8 @@ function render() {
     .filter(a => activeMadeFilter === 'all' || a.made === activeMadeFilter)
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
+  expandedId = null;
+
   grid.innerHTML = rest.length
     ? rest.map((app, i) => cardHTML(app, i)).join('')
     : `<div class="empty-state"><span>🔍</span> No projects match.</div>`;
@@ -198,24 +201,29 @@ function cardHTML(app, index) {
     </div>` : '';
 
   return `
-    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s" onclick="history.replaceState(null,'','#${app.id}')">
-      <div class="card-header">
-        <div class="card-icon">${app.icon || '📦'}</div>
-        <div class="card-title-group">
-          <div class="card-title-line">
-            <div class="card-title">${app.name}</div>
-            ${madeBadge}
+    <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s">
+      <div class="card-left">
+        <div class="card-header">
+          <div class="card-icon">${app.icon || '📦'}</div>
+          <div class="card-title-group">
+            <div class="card-title-line">
+              <div class="card-title">${app.name}</div>
+              ${madeBadge}
+            </div>
+            ${typeBadge}
           </div>
-          ${typeBadge}
+          ${infoBtn}
         </div>
-        ${infoBtn}
+        ${installPanel}
+        <p class="card-desc" id="desc-${app.id}">${app.description}</p>
       </div>
-      ${installPanel}
-      <p class="card-desc" id="desc-${app.id}">${app.description}</p>
-      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
-      <div class="card-links" id="links-${app.id}">${links}</div>
-      ${pipLine}
-      <div class="card-date" id="date-${app.id}"></div>
+      <div class="card-mid"></div>
+      <div class="card-right">
+        ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+        <div class="card-links" id="links-${app.id}">${links}</div>
+        ${pipLine}
+        <div class="card-date" id="date-${app.id}"></div>
+      </div>
     </article>`;
 }
 
@@ -312,7 +320,31 @@ if (document.getElementById('app-grid')) {
   document.getElementById('modal-close').addEventListener('click', closeModal);
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !modal.hidden) closeModal();
+    if (e.key === 'Escape') {
+      if (!modal.hidden) closeModal();
+      else if (expandedId) {
+        document.getElementById(expandedId)?.classList.remove('card--expanded');
+        expandedId = null;
+      }
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (e.target.closest('a, button')) return;
+    const card = e.target.closest('.card');
+    if (card) {
+      const id = card.id;
+      history.replaceState(null, '', '#' + id);
+      if (expandedId === id) return;
+      if (expandedId) document.getElementById(expandedId)?.classList.remove('card--expanded');
+      card.classList.add('card--expanded');
+      expandedId = id;
+    } else {
+      if (expandedId) {
+        document.getElementById(expandedId)?.classList.remove('card--expanded');
+        expandedId = null;
+      }
+    }
   });
 
   const statsEl = document.getElementById('hero-stats');

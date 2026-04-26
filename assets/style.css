@@ -276,6 +276,7 @@ nav a:hover {
   gap: 0.75rem;
   transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
   animation: fadeUp 0.25s ease both;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -287,6 +288,41 @@ nav a:hover {
 .card--highlighted {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.card--expanded {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  cursor: default;
+  border-color: var(--accent);
+}
+
+.card--expanded:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card-mid {
+  display: none;
+}
+
+.card--expanded .card-mid {
+  display: block;
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 @keyframes fadeUp {
