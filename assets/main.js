@@ -282,8 +282,11 @@ function setMadeFilter(made) {
 
 function collapseExpanded() {
   if (!expandedId) return;
-  document.getElementById(expandedId)?.classList.remove('card--expanded');
+  const card = document.getElementById(expandedId);
   expandedId = null;
+  if (!card) return;
+  card.classList.remove('card--expanded');
+  card.parentNode.style.gridAutoFlow = '';
 }
 
 function expandCard(id) {
@@ -292,6 +295,7 @@ function expandCard(id) {
   const card = document.getElementById(id);
   if (!card) return;
   card.classList.add('card--expanded');
+  card.parentNode.style.gridAutoFlow = 'dense';
   expandedId = id;
 }
 
