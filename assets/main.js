@@ -315,6 +315,9 @@ if (document.getElementById('app-grid')) {
     if (e.key === 'Escape' && !modal.hidden) closeModal();
   });
 
+  const statsEl = document.getElementById('hero-stats');
+  if (statsEl) statsEl.textContent = `explore ${allApps.length} apps, games, and tools`;
+
   render();
   fetchData();
 
