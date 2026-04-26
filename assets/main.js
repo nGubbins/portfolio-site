@@ -282,12 +282,7 @@ function setMadeFilter(made) {
 
 function collapseExpanded() {
   if (!expandedId) return;
-  const card = document.getElementById(expandedId);
-  if (card) {
-    card.classList.remove('card--expanded');
-    card.parentNode.insertBefore(card, card._expandSibling);
-    delete card._expandSibling;
-  }
+  document.getElementById(expandedId)?.classList.remove('card--expanded');
   expandedId = null;
 }
 
@@ -296,8 +291,6 @@ function expandCard(id) {
   collapseExpanded();
   const card = document.getElementById(id);
   if (!card) return;
-  card._expandSibling = card.nextSibling;
-  card.parentNode.appendChild(card);
   card.classList.add('card--expanded');
   expandedId = id;
 }
