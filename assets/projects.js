@@ -91,4 +91,14 @@ const allApps = [
     repo: "nGubbins/urlias-cli",
     links: { github: "https://github.com/nGubbins/urlias-cli" }
   },
+  {
+    id: "gridraider",
+    name: "GridRaider",
+    description: "Grid-based strategy game.",
+    type: "desktop",
+    tags: ["game", "strategy", "grid"],
+    icon: "🎮",
+    repo: "nGubbins/gridraider",
+    links: { play: "https://ngubbins.github.io/gridraider", github: "https://github.com/nGubbins/gridraider" }
+  },
 ];
