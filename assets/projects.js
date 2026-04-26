@@ -92,7 +92,7 @@ const allApps = [
     name: "urlias",
     description: "CLI tool for inspecting web pages.",
     type: "desktop",
-    platforms: ["package"],
+    platforms: ["cli"],
     tags: ["python", "cli", "web"],
     icon: "🔗",
     repo: "nGubbins/urlias-cli",
