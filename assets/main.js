@@ -258,6 +258,19 @@ function buildLinks(app) {
 
 // ── Filter ──────────────────────────────────────────────
 
+function updateFilterVisibility() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const f = btn.dataset.filter;
+    if (f === 'all') return;
+    btn.hidden = !allApps.some(a => (a.platforms || []).includes(f));
+  });
+  document.querySelectorAll('.made-filter-btn').forEach(btn => {
+    const m = btn.dataset.made;
+    if (m === 'all') return;
+    btn.hidden = !allApps.some(a => a.made === m);
+  });
+}
+
 function setFilter(type) {
   activeFilter = type;
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -439,6 +452,7 @@ if (document.getElementById('app-grid')) {
     statsEl.innerHTML = renderRow(mainDefs, '') + renderRow(madeDefs, 'hero-stats-row--sub');
   }
 
+  updateFilterVisibility();
   render();
   fetchData();
 
