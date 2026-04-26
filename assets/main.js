@@ -164,6 +164,7 @@ function render() {
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
   expandedId = null;
+  document.getElementById('card-expand-panel')?.remove();
 
   grid.innerHTML = rest.length
     ? rest.map((app, i) => cardHTML(app, i)).join('')
@@ -202,28 +203,23 @@ function cardHTML(app, index) {
 
   return `
     <article class="card" id="${app.id}" style="animation-delay:${index * 0.04}s">
-      <div class="card-left">
-        <div class="card-header">
-          <div class="card-icon">${app.icon || '📦'}</div>
-          <div class="card-title-group">
-            <div class="card-title-line">
-              <div class="card-title">${app.name}</div>
-              ${madeBadge}
-            </div>
-            ${typeBadge}
+      <div class="card-header">
+        <div class="card-icon">${app.icon || '📦'}</div>
+        <div class="card-title-group">
+          <div class="card-title-line">
+            <div class="card-title">${app.name}</div>
+            ${madeBadge}
           </div>
-          ${infoBtn}
+          ${typeBadge}
         </div>
-        ${installPanel}
-        <p class="card-desc" id="desc-${app.id}">${app.description}</p>
+        ${infoBtn}
       </div>
-      <div class="card-mid"></div>
-      <div class="card-right">
-        ${tags ? `<div class="card-tags">${tags}</div>` : ''}
-        <div class="card-links" id="links-${app.id}">${links}</div>
-        ${pipLine}
-        <div class="card-date" id="date-${app.id}"></div>
-      </div>
+      ${installPanel}
+      <p class="card-desc" id="desc-${app.id}">${app.description}</p>
+      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+      <div class="card-links" id="links-${app.id}">${links}</div>
+      ${pipLine}
+      <div class="card-date" id="date-${app.id}"></div>
     </article>`;
 }
 
@@ -280,25 +276,78 @@ function setMadeFilter(made) {
 
 // ── Card expand ─────────────────────────────────────────
 
+function getLastCardInRow(card) {
+  const allCards = [...card.parentNode.querySelectorAll('.card')];
+  const top = card.getBoundingClientRect().top;
+  const row = allCards.filter(c => Math.abs(c.getBoundingClientRect().top - top) < 5);
+  return row[row.length - 1];
+}
+
+function buildExpandPanel(app) {
+  const badgeLabels = { game: '🎮 Game', web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package', library: '📚 Library', cli: '⌨️ CLI' };
+  const madeLabels  = { handmade: '🖐️ Handmade', hybrid: '⚡ Hybrid', ai: '🤖 AI' };
+  const madeBadge   = app.made ? `<span class="made-badge ${app.made}">${madeLabels[app.made] || app.made}</span>` : '';
+  const typeBadge   = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
+  const tags        = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const desc        = document.getElementById(`desc-${app.id}`)?.textContent || app.description;
+  const linksHTML   = document.getElementById(`links-${app.id}`)?.innerHTML || '';
+  const dateHTML    = document.getElementById(`date-${app.id}`)?.innerHTML  || '';
+  const pipLine     = app.pypi ? `
+    <div class="card-pip">
+      <code>pip install ${app.pypi}</code>
+      <button class="copy-btn" onclick="copyInstall(this, 'pip install ${app.pypi}')">copy</button>
+    </div>` : '';
+
+  return `
+    <div class="expand-left">
+      <div class="card-header">
+        <div class="card-icon">${app.icon || '📦'}</div>
+        <div class="card-title-group">
+          <div class="card-title-line">
+            <div class="card-title">${app.name}</div>
+            ${madeBadge}
+          </div>
+          ${typeBadge}
+        </div>
+      </div>
+      <p class="card-desc">${desc}</p>
+    </div>
+    <div class="expand-mid"></div>
+    <div class="expand-right">
+      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+      <div class="card-links">${linksHTML}</div>
+      ${pipLine}
+      <div class="card-date">${dateHTML}</div>
+    </div>`;
+}
+
 function collapseExpanded() {
   if (!expandedId) return;
   const card = document.getElementById(expandedId);
   expandedId = null;
-  if (!card) return;
-  card.classList.add('card--collapsing');
-  setTimeout(() => {
-    card.classList.remove('card--expanded', 'card--collapsing');
-    card.parentNode.style.gridAutoFlow = '';
-  }, 200);
+  card?.classList.remove('card--selected');
+  const panel = document.getElementById('card-expand-panel');
+  if (panel) {
+    panel.classList.add('expand-panel--out');
+    setTimeout(() => panel.remove(), 220);
+  }
 }
 
 function expandCard(id) {
-  if (expandedId === id) return;
+  if (expandedId === id) { collapseExpanded(); return; }
   collapseExpanded();
   const card = document.getElementById(id);
   if (!card) return;
-  card.classList.add('card--expanded');
-  card.parentNode.style.gridAutoFlow = 'dense';
+  const app = allApps.find(a => a.id === id);
+  if (!app) return;
+
+  const panel = document.createElement('div');
+  panel.id = 'card-expand-panel';
+  panel.className = 'card-expand-panel';
+  panel.innerHTML = buildExpandPanel(app);
+  getLastCardInRow(card).after(panel);
+
+  card.classList.add('card--selected');
   expandedId = id;
 }
 
@@ -352,6 +401,7 @@ if (document.getElementById('app-grid')) {
 
   document.addEventListener('click', e => {
     if (e.target.closest('a, button')) return;
+    if (e.target.closest('#card-expand-panel')) return;
     const card = e.target.closest('.card');
     if (card) {
       history.replaceState(null, '', '#' + card.id);

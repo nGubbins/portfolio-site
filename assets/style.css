@@ -290,43 +290,58 @@ nav a:hover {
   box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
-.card--expanded {
+.card--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.card--selected:hover {
+  transform: none;
+}
+
+.card-expand-panel {
   grid-column: 1 / -1;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.6rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
   align-items: start;
-  cursor: default;
-  border-color: var(--accent);
-  animation: cardExpand 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: panelIn 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.card--expanded:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.card--collapsing {
-  animation: cardCollapse 0.2s ease both;
+.expand-panel--out {
+  animation: panelOut 0.2s ease both;
   pointer-events: none;
 }
 
-.card--expanded .card-right {
-  animation: panelSlideIn 0.3s ease 0.12s both;
+.expand-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.card--expanded .card-mid {
-  animation: panelSlideIn 0.3s ease 0.06s both;
+.expand-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: panelSlideIn 0.3s ease 0.1s both;
 }
 
-@keyframes cardExpand {
-  from { opacity: 0.4; transform: scaleX(0.97); }
-  to   { opacity: 1;   transform: scaleX(1); }
+.expand-mid {
+  /* reserved for future content */
 }
 
-@keyframes cardCollapse {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes panelOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
 }
 
 @keyframes panelSlideIn {
@@ -334,25 +349,6 @@ nav a:hover {
   to   { opacity: 1; transform: translateX(0); }
 }
 
-.card-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.card-mid {
-  display: none;
-}
-
-.card--expanded .card-mid {
-  display: block;
-}
-
-.card-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }
