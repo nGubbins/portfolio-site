@@ -318,21 +318,29 @@ if (document.getElementById('app-grid')) {
   const statsEl = document.getElementById('hero-stats');
   if (statsEl) {
     const byPlatform = key => allApps.filter(a => (a.platforms||[]).includes(key)).length;
-    const statDefs = [
-      { n: allApps.length,      label: 'Projects', color: 'var(--text)' },
+    const byMade     = key => allApps.filter(a => a.made === key).length;
+
+    const mainDefs = [
+      { n: allApps.length,       label: 'Projects', color: 'var(--text)' },
       { n: byPlatform('game'),   label: 'Games',    color: '#ec4899' },
       { n: byPlatform('web'),    label: 'Web',      color: 'var(--accent)' },
       { n: byPlatform('desktop'),label: 'Desktop',  color: '#22d3ee' },
       { n: byPlatform('package'),label: 'Packages', color: '#f97316' },
     ].filter(s => s.n > 0);
 
+    const madeDefs = [
+      { n: byMade('ai'),        label: 'AI',        color: '#0ea5e9' },
+      { n: byMade('hybrid'),    label: 'Hybrid',    color: '#6366f1' },
+      { n: byMade('handmade'),  label: 'Handmade',  color: '#84cc16' },
+    ].filter(s => s.n > 0);
+
     const sep = `<div class="hero-stat-sep"></div>`;
-    statsEl.innerHTML = statDefs.map(({ n, label, color }) =>
-      `<div class="hero-stat">
-        <span class="hero-stat-n" style="color:${color}">${n}</span>
-        <span class="hero-stat-l">${label}</span>
-      </div>`
-    ).join(sep);
+    const renderRow = (defs, cls) =>
+      `<div class="hero-stats-row ${cls}">${defs.map(({ n, label, color }) =>
+        `<div class="hero-stat"><span class="hero-stat-n" style="color:${color}">${n}</span><span class="hero-stat-l">${label}</span></div>`
+      ).join(sep)}</div>`;
+
+    statsEl.innerHTML = renderRow(mainDefs, '') + renderRow(madeDefs, 'hero-stats-row--sub');
   }
 
   render();
