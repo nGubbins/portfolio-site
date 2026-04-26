@@ -157,7 +157,7 @@ function render() {
 
   const rest = allApps
     .filter(a => !a.pinned)
-    .filter(a => activeFilter === 'all' || (activeFilter === 'pypi' ? !!a.pypi : a.type === activeFilter))
+    .filter(a => activeFilter === 'all' || (a.platforms || []).includes(activeFilter))
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
   grid.innerHTML = rest.length
