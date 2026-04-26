@@ -302,6 +302,18 @@ nav a:hover {
   border: 1px solid #f9731630;
 }
 
+.type-badge.library {
+  background: #a855f718;
+  color: #a855f7;
+  border: 1px solid #a855f730;
+}
+
+.type-badge.cli {
+  background: #eab30818;
+  color: #eab308;
+  border: 1px solid #eab30830;
+}
+
 .card-desc {
   color: var(--text-muted);
   font-size: 0.855rem;

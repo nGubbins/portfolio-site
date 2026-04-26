@@ -166,7 +166,7 @@ function render() {
 }
 
 function cardHTML(app, index) {
-  const badgeLabels = { web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package' };
+  const badgeLabels = { web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package', library: '📚 Library', cli: '⌨️ CLI' };
   const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
 
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
