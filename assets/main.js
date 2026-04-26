@@ -171,7 +171,7 @@ function cardHTML(app, index) {
   const badgeLabels = { game: '🎮 Game', web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package', library: '📚 Library', cli: '⌨️ CLI' };
   const madeLabels = { handmade: '🖐️ Handmade', hybrid: '⚡ Hybrid', ai: '🤖 AI' };
   const madeBadge = app.made ? `<span class="made-badge ${app.made}">${madeLabels[app.made] || app.made}</span>` : '';
-  const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}${madeBadge}</div>`;
+  const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
 
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const links = buildLinks(app);
@@ -202,7 +202,10 @@ function cardHTML(app, index) {
       <div class="card-header">
         <div class="card-icon">${app.icon || '📦'}</div>
         <div class="card-title-group">
-          <div class="card-title">${app.name}</div>
+          <div class="card-title-line">
+            <div class="card-title">${app.name}</div>
+            ${madeBadge}
+          </div>
           ${typeBadge}
         </div>
         ${infoBtn}
