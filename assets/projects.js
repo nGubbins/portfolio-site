@@ -30,6 +30,17 @@ const allApps = [
     links: { demo: "https://newp.space", github: "https://github.com/nGubbins/portfolio-site" }
   },
   {
+    id: "gridraider",
+    name: "GridRaider",
+    description: "Grid-based strategy game.",
+    type: "desktop",
+    platforms: ["desktop", "web"],
+    tags: ["game", "strategy", "grid"],
+    icon: "🎮",
+    repo: "nGubbins/gridraider",
+    links: { play: "https://ngubbins.github.io/gridraider", github: "https://github.com/nGubbins/gridraider" }
+  },
+  {
     id: "ng3-player",
     name: "ng3 Player",
     description: "Simple music player and library manager.",
@@ -52,16 +63,16 @@ const allApps = [
     links: { github: "https://github.com/nGubbins/peerwire" }
   },
   {
-    id: "tokensplit",
-    name: "tokensplit",
-    description: "String-separated values with user-defined multi-character delimiters.",
+    id: "quicksec",
+    name: "quicksec",
+    description: "Command-line tool that audits website security.",
     type: "package",
-    platforms: ["package", "library"],
-    tags: ["python", "library", "parsing"],
-    icon: "✂️",
-    pypi: "tokensplit",
-    repo: "nGubbins/tokensplit",
-    links: { pypi: "https://pypi.org/project/tokensplit/", github: "https://github.com/nGubbins/tokensplit" }
+    platforms: ["package", "library", "cli"],
+    tags: ["python", "cli", "security"],
+    icon: "🔒",
+    pypi: "quicksec",
+    repo: "nGubbins/quicksec",
+    links: { pypi: "https://pypi.org/project/quicksec/", github: "https://github.com/nGubbins/quicksec" }
   },
   {
     id: "newgh",
@@ -76,18 +87,6 @@ const allApps = [
     links: { pypi: "https://pypi.org/project/newgh/", github: "https://github.com/nGubbins/newgh" }
   },
   {
-    id: "quicksec",
-    name: "quicksec",
-    description: "Command-line tool that audits website security.",
-    type: "package",
-    platforms: ["package", "library", "cli"],
-    tags: ["python", "cli", "security"],
-    icon: "🔒",
-    pypi: "quicksec",
-    repo: "nGubbins/quicksec",
-    links: { pypi: "https://pypi.org/project/quicksec/", github: "https://github.com/nGubbins/quicksec" }
-  },
-  {
     id: "urlias-cli",
     name: "urlias",
     description: "CLI tool for inspecting web pages.",
@@ -99,14 +98,15 @@ const allApps = [
     links: { github: "https://github.com/nGubbins/urlias-cli" }
   },
   {
-    id: "gridraider",
-    name: "GridRaider",
-    description: "Grid-based strategy game.",
-    type: "desktop",
-    platforms: ["desktop", "web"],
-    tags: ["game", "strategy", "grid"],
-    icon: "🎮",
-    repo: "nGubbins/gridraider",
-    links: { play: "https://ngubbins.github.io/gridraider", github: "https://github.com/nGubbins/gridraider" }
+    id: "tokensplit",
+    name: "tokensplit",
+    description: "String-separated values with user-defined multi-character delimiters.",
+    type: "package",
+    platforms: ["package", "library"],
+    tags: ["python", "library", "parsing"],
+    icon: "✂️",
+    pypi: "tokensplit",
+    repo: "nGubbins/tokensplit",
+    links: { pypi: "https://pypi.org/project/tokensplit/", github: "https://github.com/nGubbins/tokensplit" }
   },
 ];
