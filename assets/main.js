@@ -316,7 +316,23 @@ if (document.getElementById('app-grid')) {
   });
 
   const statsEl = document.getElementById('hero-stats');
-  if (statsEl) statsEl.textContent = `explore ${allApps.length} apps, games, and tools`;
+  if (statsEl) {
+    const nGames    = allApps.filter(a => (a.platforms||[]).includes('game')).length;
+    const nPypi     = allApps.filter(a => a.pypi).length;
+    const nPlayable = allApps.filter(a => a.links?.demo || a.links?.play).length;
+    const stat = (n, label) =>
+      `<div class="hero-stat"><span class="hero-stat-n">${n}</span><span class="hero-stat-l">${label}</span></div>`;
+    const sep = `<div class="hero-stat-sep"></div>`;
+    statsEl.innerHTML = [
+      stat(allApps.length, 'Projects'),
+      sep,
+      stat(nGames, 'Games'),
+      sep,
+      stat(nPypi, 'On PyPI'),
+      sep,
+      stat(nPlayable, 'Playable Now'),
+    ].join('');
+  }
 
   render();
   fetchData();
