@@ -1,4 +1,5 @@
 let activeFilter = 'all';
+let activeMadeFilter = 'all';
 let searchQuery = '';
 
 // allApps is defined in assets/projects.js — edit that file to manage your projects.
@@ -158,6 +159,7 @@ function render() {
   const rest = allApps
     .filter(a => !a.pinned)
     .filter(a => activeFilter === 'all' || (a.platforms || []).includes(activeFilter))
+    .filter(a => activeMadeFilter === 'all' || a.made === activeMadeFilter)
     .filter(a => !q || [a.name, a.description, ...(a.tags || [])].some(s => s?.toLowerCase().includes(q)));
 
   grid.innerHTML = rest.length
@@ -167,7 +169,9 @@ function render() {
 
 function cardHTML(app, index) {
   const badgeLabels = { game: '🎮 Game', web: '🌐 Web', desktop: '🖥️ Desktop', android: '📱 Android', package: '📦 Package', library: '📚 Library', cli: '⌨️ CLI' };
-  const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}</div>`;
+  const madeLabels = { handmade: '🖐️ Handmade', hybrid: '⚡ Hybrid', ai: '🤖 AI' };
+  const madeBadge = app.made ? `<span class="made-badge ${app.made}">${madeLabels[app.made] || app.made}</span>` : '';
+  const typeBadge = `<div class="card-badges">${(app.platforms || []).map(p => `<span class="type-badge ${p}">${badgeLabels[p] || p}</span>`).join('')}${madeBadge}</div>`;
 
   const tags = (app.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const links = buildLinks(app);
@@ -255,6 +259,14 @@ function setFilter(type) {
   render();
 }
 
+function setMadeFilter(made) {
+  activeMadeFilter = made;
+  document.querySelectorAll('.made-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.made === made);
+  });
+  render();
+}
+
 // ── Flutter modal ────────────────────────────────────────
 
 let modal, modalFrame, modalTitle;
@@ -279,6 +291,10 @@ function closeModal() {
 if (document.getElementById('app-grid')) {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+  });
+
+  document.querySelectorAll('.made-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setMadeFilter(btn.dataset.made));
   });
 
   document.getElementById('search').addEventListener('input', e => {

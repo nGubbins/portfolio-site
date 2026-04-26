@@ -21,6 +21,7 @@ const allApps = [
   {
     id: "portfolio-site",
     name: "newp space",
+    made: "ai",
     description: "This site.",
     type: "web",
     platforms: ["web"],
@@ -32,6 +33,7 @@ const allApps = [
   {
     id: "gridraider",
     name: "GridRaider",
+    made: "ai",
     description: "Grid-based strategy game.",
     type: "desktop",
     platforms: ["game", "desktop", "web"],
@@ -43,6 +45,7 @@ const allApps = [
   {
     id: "ng3-player",
     name: "ng3 Player",
+    made: "hybrid",
     description: "Simple music player and library manager.",
     type: "flutter",
     platforms: ["desktop", "android"],
@@ -54,6 +57,7 @@ const allApps = [
   {
     id: "peerwire",
     name: "Peerwire",
+    made: "ai",
     description: "Lightweight chat app for desktop.",
     type: "desktop",
     platforms: ["desktop"],
@@ -65,6 +69,7 @@ const allApps = [
   {
     id: "quicksec",
     name: "quicksec",
+    made: "ai",
     description: "Command-line tool that audits website security.",
     type: "package",
     platforms: ["package", "library", "cli"],
@@ -77,6 +82,7 @@ const allApps = [
   {
     id: "newgh",
     name: "newgh",
+    made: "hybrid",
     description: "Sets up a Python project repo for modern development.",
     type: "package",
     platforms: ["package", "cli"],
@@ -89,6 +95,7 @@ const allApps = [
   {
     id: "urlias-cli",
     name: "urlias",
+    made: "hybrid",
     description: "CLI tool for inspecting web pages.",
     type: "desktop",
     platforms: ["cli"],
@@ -100,6 +107,7 @@ const allApps = [
   {
     id: "tokensplit",
     name: "tokensplit",
+    made: "hybrid",
     description: "String-separated values with user-defined multi-character delimiters.",
     type: "package",
     platforms: ["package", "library"],

@@ -278,6 +278,65 @@ nav a:hover {
   text-transform: uppercase;
 }
 
+.made-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.12rem 0.45rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.made-badge.handmade {
+  background: #84cc1618;
+  color: #84cc16;
+  border: 1px dashed #84cc1650;
+}
+
+.made-badge.hybrid {
+  background: #6366f118;
+  color: #6366f1;
+  border: 1px dashed #6366f150;
+}
+
+.made-badge.ai {
+  background: #0ea5e918;
+  color: #0ea5e9;
+  border: 1px dashed #0ea5e950;
+}
+
+.filter-bar--made {
+  padding-top: 0;
+  margin-top: -1.2rem;
+}
+
+.made-filter-btn {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.made-filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.made-filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  border-style: solid;
+  color: #fff;
+}
+
 .type-badge.game {
   background: #ec489918;
   color: #ec4899;
