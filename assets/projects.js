@@ -105,6 +105,18 @@ const allApps = [
     links: { github: "https://github.com/nGubbins/urlias-cli" }
   },
   {
+    id: "binary-tree-traversal-visualiser",
+    name: "Binary Tree Traversal Visualiser",
+    made: "ai",
+    description: "Interactive visualiser for binary tree traversal algorithms.",
+    type: "web",
+    platforms: ["web"],
+    tags: ["javascript", "algorithms", "visualiser"],
+    icon: "🌳",
+    repo: "nGubbins/binary-tree-reversal-visualiser",
+    links: { demo: "https://ngubbins.github.io/binary-tree-traversal-visualiser", github: "https://github.com/nGubbins/binary-tree-reversal-visualiser" }
+  },
+  {
     id: "tokensplit",
     name: "tokensplit",
     made: "hybrid",
