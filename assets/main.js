@@ -46,20 +46,16 @@ function platformLabel(filename) {
   return null;
 }
 
-function setDates(id, firstIso, latestIso, pushedAt) {
+function setDates(id, latestIso, pushedAt) {
   const el = document.getElementById(`date-${id}`);
   if (!el) return;
-  if (!firstIso && !latestIso) {
+  if (!latestIso) {
     el.innerHTML = pushedAt
       ? `<div class="date-source-only">updated ${formatDate(pushedAt)}</div>`
       : `<div class="date-source-only">source only</div>`;
     return;
   }
-  if (!latestIso || firstIso === latestIso) {
-    el.innerHTML = `<div>released ${formatDate(firstIso)}</div>`;
-  } else {
-    el.innerHTML = `<div>first release ${formatDate(firstIso)}</div><div>updated ${formatDate(latestIso)}</div>`;
-  }
+  el.innerHTML = `<div>latest release ${formatDate(latestIso)}</div>`;
 }
 
 async function fetchData() {
@@ -84,15 +80,14 @@ async function fetchData() {
         const linksEl = document.getElementById(`links-${app.id}`);
         if (linksEl) linksEl.innerHTML = buildLinks(app);
         if (!app.pypi) {
-          setDates(app.id, cached.firstPublishedAt || cached.publishedAt, cached.publishedAt, cached.pushedAt);
+          setDates(app.id, cached.publishedAt, cached.pushedAt);
         }
       } else {
         // Fallback: live API (development / cache miss)
         try {
-          const [repoRes, releaseRes, firstRes] = await Promise.all([
+          const [repoRes, releaseRes] = await Promise.all([
             fetch(`https://api.github.com/repos/${app.repo}`).catch(() => null),
-            fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null),
-            fetch(`https://api.github.com/repos/${app.repo}/releases?per_page=1&direction=asc`).catch(() => null)
+            fetch(`https://api.github.com/repos/${app.repo}/releases/latest`).catch(() => null)
           ]);
           let pushedAt = null;
           if (repoRes?.ok) {
@@ -114,12 +109,7 @@ async function fetchData() {
             latestDate = release.published_at;
           }
           if (!app.pypi) {
-            let firstDate = null;
-            if (firstRes?.ok) {
-              const [first] = await firstRes.json();
-              firstDate = first?.published_at ?? null;
-            }
-            setDates(app.id, firstDate || latestDate, latestDate, pushedAt);
+            setDates(app.id, latestDate, pushedAt);
           }
           const linksEl = document.getElementById(`links-${app.id}`);
           if (linksEl) linksEl.innerHTML = buildLinks(app);
@@ -139,7 +129,7 @@ async function fetchData() {
             if (el) el.textContent = info.summary;
           }
           const allDates = Object.values(releases).flat().map(f => f.upload_time).filter(Boolean).sort();
-          setDates(app.id, allDates[0], urls?.[0]?.upload_time);
+          setDates(app.id, urls?.[0]?.upload_time || allDates[allDates.length - 1]);
         }
       } catch {}
     }

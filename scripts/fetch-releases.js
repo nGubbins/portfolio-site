@@ -32,22 +32,15 @@ for (const repo of repos) {
     let latestRelease = null;
     try { latestRelease = gh(`repos/${repo}/releases/latest`); } catch {}
 
-    let firstRelease = null;
-    try {
-      const releases = gh(`"repos/${repo}/releases?per_page=1&direction=asc"`);
-      firstRelease = releases[0] || null;
-    } catch {}
-
     result[repo] = {
-      description:      repoData.description || '',
-      downloads:        latestRelease
-                          ? latestRelease.assets
-                              .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
-                              .filter(d => d.label)
-                          : [],
-      publishedAt:      latestRelease?.published_at || null,
-      firstPublishedAt: firstRelease?.published_at  || null,
-      pushedAt:         repoData.pushed_at          || null
+      description: repoData.description || '',
+      downloads:   latestRelease
+                     ? latestRelease.assets
+                         .map(a => ({ label: platformLabel(a.name), url: a.browser_download_url }))
+                         .filter(d => d.label)
+                     : [],
+      publishedAt: latestRelease?.published_at || null,
+      pushedAt:    repoData.pushed_at          || null
     };
 
     console.log(`✓ ${repo} (${result[repo].downloads.length} assets)`);
